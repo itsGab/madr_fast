@@ -9,18 +9,19 @@ from pydantic import (
 )
 
 
-def func_sanitiza(text): return ' '.join(text.lower().split())
+def func_sanitiza(text):
+    return ' '.join(text.lower().split())
 
 
 class UsuarioSchema(BaseModel):
     username: str
     email: EmailStr
-    password: str
+    senha: str
 
     @field_validator('username')
     def username_nao_deve_conter_espacos(cls, v):
         if ' ' in v:
-            raise ValueError('username nao deve conter espacos')
+            raise ValueError('username should not contain spaces')
         return v
 
 
@@ -30,7 +31,7 @@ class UsuarioResponse(BaseModel):
 
 
 class LivroSchema(BaseModel):
-    input_titulo: str
+    input_titulo: str = Field(alias='titulo')
     ano: int = Field(gt=0, lt=dt.today().year)
     # TODO: ver id do romancista
     # romancista_id: int
@@ -46,7 +47,7 @@ class LivroResponse(BaseModel):
 
 
 class RomancistaSchema(BaseModel):
-    input_nome: str
+    input_nome: str = Field(alias='nome')
 
     @computed_field
     def nome(self) -> str:
