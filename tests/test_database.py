@@ -3,7 +3,7 @@ from sqlalchemy import select
 from madr_fast.models import Usuario
 
 
-def test_criacao_usuario_retorna_usuario_em_database(session):
+def test_database(session):
     novo_usuario = Usuario(
         username='usuario_de_teste',
         email='usuario@de.teste',

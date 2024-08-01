@@ -1,8 +1,8 @@
-"""criacao das tabelas
+"""iniciando db
 
-Revision ID: 367251330576
+Revision ID: f1a8f6e4f54d
 Revises: 
-Create Date: 2024-08-01 17:53:01.875616
+Create Date: 2024-08-01 20:03:00.793538
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '367251330576'
+revision: str = 'f1a8f6e4f54d'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,7 +24,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('titulo', sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
-    sa.Column('update_at', sa.DateTime(), onupdate=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    sa.Column('update_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('titulo')
     )
@@ -32,7 +32,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nome', sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
-    sa.Column('update_at', sa.DateTime(), onupdate=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    sa.Column('update_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('nome')
     )
@@ -42,7 +42,7 @@ def upgrade() -> None:
     sa.Column('senha', sa.String(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
-    sa.Column('update_at', sa.DateTime(), onupdate=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    sa.Column('update_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')

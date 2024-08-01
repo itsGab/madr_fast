@@ -11,6 +11,7 @@ def test_cria_conta_dados_validos_retorna_criado(client):
     json_output = {  # saida esperada
         'username': 'usuario_de_teste',
         'email': 'usuario@de.teste',
+        'id': 1,
     }
 
     response = client.post('/contas', json=json_input)
