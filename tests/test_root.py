@@ -6,7 +6,6 @@ from madr_fast.app import app
 
 
 def test_root_returns_message():
-    
     client = TestClient(app)
 
     response = client.get('/')
