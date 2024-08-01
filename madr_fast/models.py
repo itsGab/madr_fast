@@ -19,7 +19,7 @@ class Usuario:
         init=False, server_default=func.now()
     )
     update_at: Mapped[datetime] = mapped_column(
-        init=False, server_default=func.now(), onupdate=func.now()
+        init=False, onupdate=func.now()
     )
 
 
@@ -36,13 +36,13 @@ class Livro:
         init=False, server_default=func.now()
     )
     update_at: Mapped[datetime] = mapped_column(
-        init=False, server_default=func.now(), onupdate=
+        init=False, onupdate=func.now()
     )
 
 
 @table_registry.mapped_as_dataclass
-class Romancistas:
-    __tablename__ = 'romancista'
+class Romancista:
+    __tablename__ = 'romancistas'
 
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     nome: Mapped[str] = mapped_column(unique=True)
@@ -51,5 +51,5 @@ class Romancistas:
         init=False, server_default=func.now()
     )
     update_at: Mapped[datetime] = mapped_column(
-        init=False, server_default=func.now(), onupdate=func.now()
+        init=False, onupdate=func.now()
     )
