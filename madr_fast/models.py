@@ -19,7 +19,7 @@ class Usuario:
         init=False, server_default=func.now()
     )
     update_at: Mapped[datetime] = mapped_column(
-        init=False, onupdate=func.now()
+        init=False, onupdate=func.now(), server_default=func.now()
     )
 
 
@@ -36,7 +36,7 @@ class Livro:
         init=False, server_default=func.now()
     )
     update_at: Mapped[datetime] = mapped_column(
-        init=False, onupdate=func.now()
+        init=False, onupdate=func.now(), server_default=func.now()
     )
 
 
@@ -51,5 +51,5 @@ class Romancista:
         init=False, server_default=func.now()
     )
     update_at: Mapped[datetime] = mapped_column(
-        init=False, onupdate=func.now()
+        init=False, onupdate=func.now(), server_default=func.now()
     )

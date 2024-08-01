@@ -13,6 +13,7 @@ def func_sanitiza(text):
     return ' '.join(text.lower().split())
 
 
+# Usuario ---
 class UsuarioSchema(BaseModel):
     username: str
     email: EmailStr
@@ -26,10 +27,26 @@ class UsuarioSchema(BaseModel):
 
 
 class UsuarioResponse(BaseModel):
+    id: int
     username: str
     email: EmailStr
 
 
+class UsuarioUpdate(BaseModel):
+    username: str | None = None
+    email: EmailStr | None = None
+    senha: str | None = None
+
+    @field_validator('username')
+    def verifica_username(cls, v):
+        if not v:  # username pode ser None `on update`
+            return v
+        if ' ' in v:  # username não deve conter espaços
+            raise ValueError('username should not contain spaces')
+        return v
+
+
+# Livro ---
 class LivroSchema(BaseModel):
     input_titulo: str = Field(alias='titulo')
     ano: int = Field(gt=0, lt=dt.today().year)
@@ -46,6 +63,7 @@ class LivroResponse(BaseModel):
     ano: int
 
 
+# Romancista ---
 class RomancistaSchema(BaseModel):
     input_nome: str = Field(alias='nome')
 
