@@ -22,3 +22,12 @@ def test_jwt():
     )
     assert decoded['test'] == data['test']
     assert decoded['exp']
+
+
+def test_security_current_user_token_invalido(): ...
+
+
+def test_security_current_user_token_vazio(): ...
+
+
+def test_security_current_user_token_sem_sub(): ...

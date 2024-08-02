@@ -1,0 +1,19 @@
+def test_atualiza_valido_retorna_ok_e_schema(): ...
+
+
+def test_atualiza_token_invalido(): ...
+
+
+def test_atualiza_por_usuario_invalido(): ...
+
+
+def test_atualiza_conflito_dados_ja_existem(): ...
+
+
+def test_atualiza_alguns_campos_em_branco(): ...
+    # campo: username vazio
+    # campo: email vazio
+    # campo: senha vazio
+
+
+def test_atualiza_username_sanitizado(): ...

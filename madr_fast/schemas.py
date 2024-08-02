@@ -5,7 +5,6 @@ from pydantic import (
     EmailStr,
     Field,
     computed_field,
-    field_validator,
 )
 
 
@@ -20,15 +19,20 @@ class Message(BaseModel):
 
 # Usuario ---
 class UsuarioSchema(BaseModel):
-    username: str
+    input_username: str = Field(alias='username')
     email: EmailStr
     senha: str
 
-    @field_validator('username')
-    def username_nao_deve_conter_espacos(cls, v):
-        if ' ' in v:
-            raise ValueError('username should not contain spaces')
-        return v
+    # TODO: adicionar um validacao para caracteres especiais
+    # @field_validator('username')
+    # def username_nao_deve_conter_caracteres_especiais(cls, v):
+    #     if special_c in v:
+    #         raise ValueError('username should not contain special characs')
+    #     return v
+
+    @computed_field
+    def username(self) -> str:
+        return func_sanitiza(self.input_username)
 
 
 class UsuarioResponse(BaseModel):
@@ -38,25 +42,22 @@ class UsuarioResponse(BaseModel):
 
 
 class UsuarioUpdate(BaseModel):
-    username: str | None = None
+    input_username: str = Field(alias='username')
     email: EmailStr | None = None
     senha: str | None = None
 
-    @field_validator('username')
-    def verifica_username(cls, v):
-        if not v:  # username pode ser None `on update`
-            return v
-        if ' ' in v:  # username não deve conter espaços
-            raise ValueError('username should not contain spaces')
-        return v
+    # TODO: adicionar um validacao para caracteres especiais
+
+    @computed_field
+    def username(self) -> str:
+        return func_sanitiza(self.input_username)
 
 
 # Livro ---
 class LivroSchema(BaseModel):
     input_titulo: str = Field(alias='titulo')
     ano: int = Field(gt=0, lt=dt.today().year)
-    # TODO: ver id do romancista
-    # romancista_id: int
+    romancista_id: int
 
     @computed_field
     def titulo(self) -> str:
@@ -78,8 +79,7 @@ class RomancistaSchema(BaseModel):
 
 
 class RomancistaResponse(BaseModel):
-    # TODO: adicionar id
-    # id: int
+    id: int
     nome: str
 
 

@@ -25,7 +25,7 @@ T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 @router.post(
     '/', response_model=UsuarioResponse, status_code=HTTPStatus.CREATED
 )
-def cria_conta(usuario: UsuarioSchema, session: T_Session):
+def registra_conta(usuario: UsuarioSchema, session: T_Session):
     usuario_db = session.scalar(
         select(Usuario).where(
             (Usuario.username == usuario.username)
