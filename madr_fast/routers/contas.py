@@ -23,7 +23,7 @@ T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 
 
 @router.post(
-    '/', response_model=UsuarioResponse, status_code=HTTPStatus.CREATEDs
+    '/', response_model=UsuarioResponse, status_code=HTTPStatus.CREATED
 )
 def cria_conta(usuario: UsuarioSchema, session: T_Session):
     usuario_db = session.scalar(
@@ -61,7 +61,7 @@ def cria_conta(usuario: UsuarioSchema, session: T_Session):
     '/{id_usuario}', response_model=UsuarioResponse, status_code=HTTPStatus.OK
 )
 def atualiza_conta(
-    id_usuario,
+    id_usuario: int,
     usuario: UsuarioUpdate,
     session: T_Session,
     usuario_atual: T_CurrentUser,
@@ -74,6 +74,7 @@ def atualiza_conta(
     usuario_atual = session.scalar(
         select(Usuario).where((Usuario.id == id_usuario))
     )
+    usuario.senha = get_password_hash(usuario.senha)
     for key, value in usuario.model_dump(exclude_unset=True).items():
         setattr(usuario_atual, key, value)
 
@@ -87,7 +88,9 @@ def atualiza_conta(
 @router.delete(
     '/{id_usuario}', response_model=Message, status_code=HTTPStatus.OK
 )
-def deleta_conta(id_usuario, session: T_Session, usuario_atual: T_CurrentUser):
+def deleta_conta(
+    id_usuario: int, session: T_Session, usuario_atual: T_CurrentUser
+):
     if usuario_atual.id != id_usuario:
         raise HTTPException(
             status_code=HTTPStatus.UNAUTHORIZED, detail='Não autorizado'

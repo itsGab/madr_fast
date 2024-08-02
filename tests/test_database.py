@@ -8,5 +8,5 @@ def test_database(session, usuario):
         select(Usuario).where(Usuario.username == usuario.username)
     )
 
-    assert usuario_db.username == 'usuario_de_teste'
+    assert usuario_db.username == usuario.username
     assert usuario_db.created_at

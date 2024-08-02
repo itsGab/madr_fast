@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from madr_fast.security import settings
+from madr_fast.settings import Settings
 
-engine = create_engine(settings.DATABASE_URL)
+engine = create_engine(Settings().DATABASE_URL)
 
 
 def get_session():

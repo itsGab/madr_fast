@@ -13,7 +13,6 @@ from madr_fast.schemas import Token
 from madr_fast.security import (
     create_access_token,
     get_current_user,
-    # get_password_hash,
     verify_password,
 )
 

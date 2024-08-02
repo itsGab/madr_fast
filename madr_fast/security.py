@@ -6,7 +6,7 @@ from fastapi import Depends
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jwt import decode, encode
-from jwt.exceptions import PyJWTError
+from jwt.exceptions import DecodeError, PyJWTError
 from pwdlib import PasswordHash
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -19,8 +19,9 @@ from madr_fast.settings import Settings
 
 settings = Settings()
 pwd_context = PasswordHash.recommended()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
 
-T_Token = Annotated[str, Depends(OAuth2PasswordBearer(tokenUrl='token'))]
+T_Token = Annotated[str, Depends(oauth2_scheme)]
 T_Session = Annotated[Session, Depends(get_session)]
 
 
@@ -30,7 +31,9 @@ def create_access_token(data: dict):
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     )
     to_encode.update({'exp': expire})
-    encoded_jwt = encode(to_encode, settings.SECRET_KEY)
+    encoded_jwt = encode(
+        to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
+    )
     return encoded_jwt
 
 
@@ -42,7 +45,10 @@ def verify_password(plain_pwd: str, hashed_pwd: str):
     return pwd_context.verify(plain_pwd, hashed_pwd)
 
 
-def get_current_user(session: T_Session, token: T_Token):
+def get_current_user(
+    session: T_Session,
+    token: T_Token,
+):
     credentials_exception = HTTPException(
         status_code=HTTPStatus.UNAUTHORIZED,
         detail='Não autorizado',
@@ -57,10 +63,14 @@ def get_current_user(session: T_Session, token: T_Token):
         if not username:
             raise credentials_exception
         token_data = TokenData(username=username)
-    except PyJWTError:
-        raise credentials_exception
+    except DecodeError as er:
+        raise er
+    except PyJWTError as er:
+        raise er
 
-    usuario = session.scalar(select(Usuario.email == token_data.username))
+    usuario = session.scalar(
+        select(Usuario).where(Usuario.email == token_data.username)
+    )
 
     if not usuario:
         raise credentials_exception
