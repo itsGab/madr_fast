@@ -6,7 +6,8 @@ from sqlalchemy.pool import StaticPool
 
 from madr_fast.app import app
 from madr_fast.database import get_session
-from madr_fast.models import table_registry
+from madr_fast.models import Usuario, table_registry
+from madr_fast.security import get_password_hash
 
 
 @pytest.fixture
@@ -34,3 +35,21 @@ def session():
         yield session
 
     table_registry.metadata.drop_all(engine)
+
+
+@pytest.fixture
+def usuario(session):
+    segredo = 'segredo'
+    usuario = Usuario(
+        username='usuario_de_teste',
+        email='usuario@de.teste',
+        senha=get_password_hash(segredo),
+    )
+
+    session.add(usuario)
+    session.commit()
+    session.refresh(usuario)
+
+    usuario.senha_pura = segredo
+
+    return usuario

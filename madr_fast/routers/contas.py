@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from madr_fast.database import get_session
 from madr_fast.models import Usuario
 from madr_fast.schemas import UsuarioResponse, UsuarioSchema, UsuarioUpdate
+from madr_fast.security import get_password_hash, get_current_user
 from madr_fast.settings import Settings
 
 settings = Settings()
@@ -17,6 +18,7 @@ router = APIRouter(prefix='/contas', tags=['contas'])
 
 # types annotated
 T_Session = Annotated[Session, Depends(get_session)]
+T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 
 
 @router.post(
@@ -40,9 +42,11 @@ def cria_conta(usuario: UsuarioSchema, session: T_Session):
                 detail='conta já consta no MADR',
             )
 
+    hash_da_senha = get_password_hash(usuario.senha)
+
     usuario_db = Usuario(
         username=usuario.username,
-        senha=usuario.senha,
+        senha=hash_da_senha,
         email=usuario.email,
     )
     session.add(usuario_db)
@@ -55,16 +59,26 @@ def cria_conta(usuario: UsuarioSchema, session: T_Session):
 @router.put(
     '/{id_usuario}', response_model=UsuarioResponse, status_code=HTTPStatus.OK
 )
-def atualiza_conta(id_usuario, usuario: UsuarioUpdate, session: T_Session):
-    # adicionar validacao e autorizacao de usuario
-    usuario_db = session.scalar(
+def atualiza_conta(
+    id_usuario, 
+    usuario: UsuarioUpdate, 
+    session: T_Session,
+    usuario_atual: T_CurrentUser
+):
+    if usuario_atual.id != id_usuario:
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail='Não autorizado'
+        )
+
+    usuario_atual = session.scalar(
         select(Usuario).where((Usuario.id == id_usuario))
     )
     for key, value in usuario.model_dump(exclude_unset=True).items():
-        setattr(usuario_db, key, value)
+        setattr(usuario_atual, key, value)
 
-    session.add(usuario_db)
+    session.add(usuario_atual)
     session.commit()
-    session.refresh(usuario_db)
+    session.refresh(usuario_atual)
 
-    return usuario_db
+    return usuario_atual
