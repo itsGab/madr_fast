@@ -8,8 +8,13 @@ from sqlalchemy.orm import Session
 
 from madr_fast.database import get_session
 from madr_fast.models import Usuario
-from madr_fast.schemas import UsuarioResponse, UsuarioSchema, UsuarioUpdate
-from madr_fast.security import get_password_hash, get_current_user, settings
+from madr_fast.schemas import (
+    Message,
+    UsuarioResponse,
+    UsuarioSchema,
+    UsuarioUpdate,
+)
+from madr_fast.security import get_current_user, get_password_hash
 
 router = APIRouter(prefix='/contas', tags=['contas'])
 
@@ -18,7 +23,7 @@ T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 
 
 @router.post(
-    '/', response_model=UsuarioResponse, status_code=HTTPStatus.CREATED
+    '/', response_model=UsuarioResponse, status_code=HTTPStatus.CREATEDs
 )
 def cria_conta(usuario: UsuarioSchema, session: T_Session):
     usuario_db = session.scalar(
@@ -56,15 +61,14 @@ def cria_conta(usuario: UsuarioSchema, session: T_Session):
     '/{id_usuario}', response_model=UsuarioResponse, status_code=HTTPStatus.OK
 )
 def atualiza_conta(
-    id_usuario, 
-    usuario: UsuarioUpdate, 
+    id_usuario,
+    usuario: UsuarioUpdate,
     session: T_Session,
-    usuario_atual: T_CurrentUser
+    usuario_atual: T_CurrentUser,
 ):
     if usuario_atual.id != id_usuario:
         raise HTTPException(
-            status_code=HTTPStatus.UNAUTHORIZED,
-            detail='Não autorizado'
+            status_code=HTTPStatus.UNAUTHORIZED, detail='Não autorizado'
         )
 
     usuario_atual = session.scalar(
@@ -78,3 +82,18 @@ def atualiza_conta(
     session.refresh(usuario_atual)
 
     return usuario_atual
+
+
+@router.delete(
+    '/{id_usuario}', response_model=Message, status_code=HTTPStatus.OK
+)
+def deleta_conta(id_usuario, session: T_Session, usuario_atual: T_CurrentUser):
+    if usuario_atual.id != id_usuario:
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED, detail='Não autorizado'
+        )
+
+    session.delete(usuario_atual)
+    session.commit()
+
+    return {'message': 'Conta deletada com sucesso'}

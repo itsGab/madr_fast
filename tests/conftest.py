@@ -1,9 +1,9 @@
+import factory
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
-import factory
 
 from madr_fast.app import app
 from madr_fast.database import get_session

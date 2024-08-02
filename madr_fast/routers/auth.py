@@ -12,9 +12,9 @@ from madr_fast.models import Usuario
 from madr_fast.schemas import Token
 from madr_fast.security import (
     create_access_token,
+    get_current_user,
     # get_password_hash,
     verify_password,
-    get_current_user,
 )
 
 router = APIRouter(prefix='/auth', tags=['auth'])
@@ -50,5 +50,5 @@ def atualiza_token_de_acesso(usuario_atual: T_CurrentUser):
     novo_token_de_acesso = create_access_token(
         data={'sub': usuario_atual.email}
     )
-    
+
     return {'access_token': novo_token_de_acesso, 'token_type': 'bearer'}

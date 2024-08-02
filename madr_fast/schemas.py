@@ -13,6 +13,11 @@ def func_sanitiza(text):
     return ' '.join(text.lower().split())
 
 
+# Message ---
+class Message(BaseModel):
+    message: str
+
+
 # Usuario ---
 class UsuarioSchema(BaseModel):
     username: str
