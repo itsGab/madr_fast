@@ -9,14 +9,10 @@ from sqlalchemy.orm import Session
 from madr_fast.database import get_session
 from madr_fast.models import Usuario
 from madr_fast.schemas import UsuarioResponse, UsuarioSchema, UsuarioUpdate
-from madr_fast.security import get_password_hash, get_current_user
-from madr_fast.settings import Settings
-
-settings = Settings()
+from madr_fast.security import get_password_hash, get_current_user, settings
 
 router = APIRouter(prefix='/contas', tags=['contas'])
 
-# types annotated
 T_Session = Annotated[Session, Depends(get_session)]
 T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 
