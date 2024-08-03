@@ -71,3 +71,16 @@ def outro_usuario(session):
     usuario.senha_pura = segredo
 
     return usuario
+
+
+@pytest.fixture
+def token(client, usuario):
+    response = client.post(
+        '/auth/token',
+        data={
+            'username': usuario.email,
+            'password': usuario.senha_pura,
+        },
+    )
+
+    return response.json()['access_token']

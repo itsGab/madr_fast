@@ -70,7 +70,7 @@ def test_registra_conflito_dados_ja_existem(client):
     response = client.post('/contas', json=json_input_username_repetido)
 
     assert response.status_code == HTTPStatus.CONFLICT
-    assert response.json() == {'detail': 'conta já consta no MADR'}
+    assert response.json() == {'detail': 'Conta já consta no MADR'}
 
     # conflito: email repetido
     json_input_email_repetido = {
@@ -82,7 +82,7 @@ def test_registra_conflito_dados_ja_existem(client):
     response = client.post('/contas', json=json_input_email_repetido)
 
     assert response.status_code == HTTPStatus.CONFLICT
-    assert response.json() == {'detail': 'conta já consta no MADR'}
+    assert response.json() == {'detail': 'Conta já consta no MADR'}
 
 
 def test_registra_username_sanitizado(client):
@@ -102,4 +102,20 @@ def test_registra_username_sanitizado(client):
     assert response.json() == json_output
 
 
-def test_registra_email_invalido_IMPLEMENTAR(): ...
+def test_registra_email_invalido_IMPLEMENTAR(client):
+    json_input = {
+        'username': 'user-test',
+        'email': 'email-invalido',
+        'senha': 'segredo',
+    }
+
+    response = client.post(
+        '/contas',
+        json=json_input,
+    )
+
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert (
+        response.json()['detail'][0]['msg'] == 'value is not a valid email'
+        ' address: An email address must have an @-sign.'
+    )

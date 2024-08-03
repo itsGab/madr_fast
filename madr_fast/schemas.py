@@ -42,7 +42,7 @@ class UsuarioResponse(BaseModel):
 
 
 class UsuarioUpdate(BaseModel):
-    input_username: str = Field(alias='username')
+    input_username: str = Field(alias='username', default=None)
     email: EmailStr | None = None
     senha: str | None = None
 
@@ -50,6 +50,8 @@ class UsuarioUpdate(BaseModel):
 
     @computed_field
     def username(self) -> str:
+        if not self.input_username:
+            return None
         return func_sanitiza(self.input_username)
 
 

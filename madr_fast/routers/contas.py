@@ -40,7 +40,7 @@ def registra_conta(usuario: UsuarioSchema, session: T_Session):
         ):
             raise HTTPException(  # TODO: melhorar exception
                 status_code=HTTPStatus.CONFLICT,
-                detail='conta já consta no MADR',
+                detail='Conta já consta no MADR',
             )
 
     hash_da_senha = get_password_hash(usuario.senha)
@@ -71,18 +71,49 @@ def atualiza_conta(
             status_code=HTTPStatus.UNAUTHORIZED, detail='Não autorizado'
         )
 
-    usuario_atual = session.scalar(
-        select(Usuario).where((Usuario.id == id_usuario))
+    usuario_db = session.scalar(
+        select(Usuario).where(Usuario.id == id_usuario)
     )
-    usuario.senha = get_password_hash(usuario.senha)
-    for key, value in usuario.model_dump(exclude_unset=True).items():
-        setattr(usuario_atual, key, value)
+    # check se existe outro usuario com o novo
+    check_db = session.scalar(
+        select(Usuario).where(
+            (
+                (Usuario.username == usuario.username)
+                & (Usuario.id != usuario_atual.id)
+            )
+            | (
+                (Usuario.email == usuario.email)
+                & (Usuario.id != usuario_atual.id)
+            )
+        )
+    )
+    if check_db:
+        if (
+            check_db.username == usuario.username
+            or check_db.email == usuario.email
+        ):
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail='Conta já consta no MADR',
+            )
+    # fim
 
-    session.add(usuario_atual)
+    if not usuario_db:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Usuário não encontrado'
+        )
+
+    if usuario.senha:
+        usuario.senha = get_password_hash(usuario.senha)
+
+    for key, value in usuario.model_dump(exclude_none=True).items():
+        setattr(usuario_db, key, value)
+
+    session.add(usuario_db)
     session.commit()
-    session.refresh(usuario_atual)
+    session.refresh(usuario_db)
 
-    return usuario_atual
+    return usuario_db
 
 
 @router.delete(
