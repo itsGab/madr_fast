@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from madr_fast.database import get_session
 from madr_fast.models import Romancista
-from madr_fast.schemas import RomancistaSchema, RomancistaResponse
+from madr_fast.schemas import RomancistaResponse, RomancistaSchema
 
 router = APIRouter(prefix='/romancistas', tags=['romancistas'])
 
@@ -17,11 +17,7 @@ T_Session = Annotated[Session, Depends(get_session)]
 
 # CREATE ---
 @router.post('/', response_model=RomancistaResponse)
-def cadastrar_romancista(
-    romancista: RomancistaSchema,
-    session: T_Session
-):  
-
+def cadastrar_romancista(romancista: RomancistaSchema, session: T_Session):
     # verificar se o romancista existe no database
     check_db = session.scalar(
         select(Romancista).where(Romancista.nome == romancista.nome)
@@ -32,10 +28,8 @@ def cadastrar_romancista(
             detail='Romancista já consta no MADR',
         )
 
-    romancista_db = Romancista(
-        nome=romancista.nome
-    )
-    session.add(romancista_db),
+    romancista_db = Romancista(nome=romancista.nome)
+    (session.add(romancista_db),)
     session.commit()
     session.refresh(romancista_db)
 
@@ -43,7 +37,7 @@ def cadastrar_romancista(
 
 
 # READ ---
-    # read list?
+# read list?
 
 # UPDATE (PATCH) ---
 

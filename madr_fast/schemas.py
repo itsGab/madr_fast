@@ -85,7 +85,6 @@ class LivroUpdate(BaseModel):
         return func_sanitiza_espacos_e_minuscula(self.input_titulo)
 
 
-
 # Romancista ---
 class RomancistaSchema(BaseModel):
     input_nome: str = Field(alias='nome')

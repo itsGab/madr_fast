@@ -87,7 +87,7 @@ def atualiza_conta(
             )
         )
     )
-    if check_db: # TODO: REDUNDANCIA, VERIFICAR COM CALMA
+    if check_db:  # TODO: REDUNDANCIA, VERIFICAR COM CALMA
         if (
             check_db.username == usuario.username
             or check_db.email == usuario.email

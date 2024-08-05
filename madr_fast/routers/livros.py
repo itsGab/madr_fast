@@ -18,10 +18,9 @@ T_Session = Annotated[Session, Depends(get_session)]
 # CREATE ---
 @router.post('/', response_model=LivroResponse)
 def cadastrar_livro(
-    livro: LivroSchema, 
+    livro: LivroSchema,
     session: T_Session,
-):  
-
+):
     # verificar por titulo se o livro ja existe no database
     check_db = session.scalar(
         select(Livro).where(Livro.titulo == livro.titulo)
@@ -43,9 +42,7 @@ def cadastrar_livro(
         )
 
     livro_db = Livro(
-        titulo=livro.titulo,
-        ano=livro.ano,
-        romancista_id=livro.romancista_id
+        titulo=livro.titulo, ano=livro.ano, romancista_id=livro.romancista_id
     )
     session.add(livro_db)
     session.commit()
@@ -55,7 +52,7 @@ def cadastrar_livro(
 
 
 # READ ---
-    # read list?
+# read list?
 
 # UPDATE (PATCH) ---
 
