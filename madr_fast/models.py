@@ -24,28 +24,6 @@ class Usuario:
 
 
 @table_registry.mapped_as_dataclass
-class Livro:
-    __tablename__ = 'livros'
-
-    id: Mapped[int] = mapped_column(init=False, primary_key=True)
-    titulo: Mapped[str] = mapped_column(unique=True)
-    ano: Mapped[int] = mapped_column()
-
-    created_at: Mapped[datetime] = mapped_column(
-        init=False, server_default=func.now()
-    )
-    update_at: Mapped[datetime] = mapped_column(
-        init=False, onupdate=func.now(), server_default=func.now()
-    )
-
-    romancista_id: Mapped[int] = mapped_column(ForeignKey('romancistas.id'))
-
-    autoria: Mapped['Romancista'] = relationship(
-        init=False, back_populates='livros'
-    )
-
-
-@table_registry.mapped_as_dataclass
 class Romancista:
     __tablename__ = 'romancistas'
 
@@ -59,6 +37,29 @@ class Romancista:
         init=False, onupdate=func.now(), server_default=func.now()
     )
 
+    # relacao
     livros: Mapped[list['Livro']] = relationship(
-        init=False, back_populates='romancistas', cascade='all, delete-orphan'
+        init=False, back_populates='romancista', cascade='all, delete-orphan'
+    )
+
+
+@table_registry.mapped_as_dataclass
+class Livro:
+    __tablename__ = 'livros'
+
+    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+    titulo: Mapped[str] = mapped_column(unique=True)
+    ano: Mapped[int]
+
+    created_at: Mapped[datetime] = mapped_column(
+        init=False, server_default=func.now()
+    )
+    update_at: Mapped[datetime] = mapped_column(
+        init=False, onupdate=func.now(), server_default=func.now()
+    )
+
+    romancista_id: Mapped[int] = mapped_column(ForeignKey('romancistas.id'))
+
+    romancista: Mapped[Romancista] = relationship(
+        init=False, back_populates='livros'
     )

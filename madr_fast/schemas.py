@@ -8,7 +8,7 @@ from pydantic import (
 )
 
 
-def func_sanitiza(text):
+def func_sanitiza_espacos_e_minuscula(text):
     return ' '.join(text.lower().split())
 
 
@@ -32,7 +32,7 @@ class UsuarioSchema(BaseModel):
 
     @computed_field
     def username(self) -> str:
-        return func_sanitiza(self.input_username)
+        return func_sanitiza_espacos_e_minuscula(self.input_username)
 
 
 class UsuarioResponse(BaseModel):
@@ -52,17 +52,18 @@ class UsuarioUpdate(BaseModel):
     def username(self) -> str:
         if not self.input_username:
             return None
-        return func_sanitiza(self.input_username)
+        return func_sanitiza_espacos_e_minuscula(self.input_username)
 
 
 # Livro ---
 class LivroSchema(BaseModel):
     input_titulo: str = Field(alias='titulo')
     ano: int = Field(gt=0, lt=dt.today().year)
+    romancista_id: int
 
     @computed_field
     def titulo(self) -> str:
-        return func_sanitiza(self.input_titulo)
+        return func_sanitiza_espacos_e_minuscula(self.input_titulo)
 
 
 class LivroResponse(BaseModel):
@@ -72,18 +73,41 @@ class LivroResponse(BaseModel):
     romancista_id: int
 
 
+class LivroUpdate(BaseModel):
+    input_titulo: str | None = Field(alias='titulo', default=None)
+    ano: int | None = Field(gt=0, lt=dt.today().year, default=None)
+    romancista_id: int | None
+
+    @computed_field
+    def titulo(self) -> str:
+        if not self.input_titulo:
+            return None
+        return func_sanitiza_espacos_e_minuscula(self.input_titulo)
+
+
+
 # Romancista ---
 class RomancistaSchema(BaseModel):
     input_nome: str = Field(alias='nome')
 
     @computed_field
     def nome(self) -> str:
-        return func_sanitiza(self.input_nome)
+        return func_sanitiza_espacos_e_minuscula(self.input_nome)
 
 
 class RomancistaResponse(BaseModel):
     id: int
     nome: str
+
+
+class RomancistaUpdate(BaseModel):
+    input_nome: str | None = Field(alias='nome', default=None)
+
+    @computed_field
+    def nome(self) -> str:
+        if not self.input_nome:
+            return None
+        return func_sanitiza_espacos_e_minuscula(self.input_nome)
 
 
 # Token ---
