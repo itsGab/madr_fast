@@ -1,4 +1,4 @@
-# Ideias gerais do projeto (e comentarios)
+# Pontos gerais do projeto (e comentarios)
 - a maior parte sera escrita em portgues por opcao
 - todo: talvez seja interessante fazer a "traducao" pro ingles
 - a falta de acentuacao eh preguica de mudar a config do teclado toda hora
@@ -9,7 +9,7 @@
 
 
 ---
-# Proximas tarefas a fazer:
+# Tarefas sendo feitas:
 
 ## terminar esses por primeiro
 - pensar: em mudar `registra` para `cadastra` em contas
@@ -25,7 +25,7 @@
 
 
 ---
-# Lista geral do que ainda falta fazer:
+# Lista de tarefas gerais (o que ainda falta) :
 - contas: mudar nome do create ???
 - relacionamento do db: ver se esta funcionando direito
 - livros - crud:
