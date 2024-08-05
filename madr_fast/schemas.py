@@ -59,7 +59,6 @@ class UsuarioUpdate(BaseModel):
 class LivroSchema(BaseModel):
     input_titulo: str = Field(alias='titulo')
     ano: int = Field(gt=0, lt=dt.today().year)
-    romancista_id: int
 
     @computed_field
     def titulo(self) -> str:
@@ -69,6 +68,8 @@ class LivroSchema(BaseModel):
 class LivroResponse(BaseModel):
     titulo: str
     ano: int
+    id: int
+    romancista_id: int
 
 
 # Romancista ---

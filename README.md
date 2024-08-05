@@ -5,5 +5,11 @@ comentarios:
 - todo: talvez revise acentuacao depois
 
 todo:
+- fazer crud dos
+    - livros
+    - romancista
+    - adicionar relacionamento
 - test
-- crud do resto
+    - security
+    - livros
+    - romancistas

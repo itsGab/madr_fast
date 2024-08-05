@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import func
-from sqlalchemy.orm import Mapped, mapped_column, registry
+from sqlalchemy import func, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, registry, relationship
 
 table_registry = registry()
 
@@ -29,14 +29,19 @@ class Livro:
 
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     titulo: Mapped[str] = mapped_column(unique=True)
-    ano: ...
-    romancista: ...  # relacional
+    ano: Mapped[int] = mapped_column()
 
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
     update_at: Mapped[datetime] = mapped_column(
         init=False, onupdate=func.now(), server_default=func.now()
+    )
+
+    romancista_id: Mapped[int] = mapped_column(ForeignKey('romancistas.id'))
+
+    autoria: Mapped['Romancista'] = relationship(
+        init=False, back_populates='livros'
     )
 
 
@@ -52,4 +57,8 @@ class Romancista:
     )
     update_at: Mapped[datetime] = mapped_column(
         init=False, onupdate=func.now(), server_default=func.now()
+    )
+
+    livros: Mapped[list['Livro']] = relationship(
+        init=False, back_populates='romancistas', cascade='all, delete-orphan'
     )

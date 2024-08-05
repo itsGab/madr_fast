@@ -74,7 +74,7 @@ def atualiza_conta(
     usuario_db = session.scalar(
         select(Usuario).where(Usuario.id == id_usuario)
     )
-    # check se existe outro usuario com o novo
+    # verifica username ou email repetido
     check_db = session.scalar(
         select(Usuario).where(
             (
@@ -96,7 +96,6 @@ def atualiza_conta(
                 status_code=HTTPStatus.CONFLICT,
                 detail='Conta já consta no MADR',
             )
-    # fim
 
     if not usuario_db:
         raise HTTPException(
