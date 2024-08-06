@@ -58,7 +58,7 @@ class UsuarioUpdate(BaseModel):
 # Livro ---
 class LivroSchema(BaseModel):
     input_titulo: str = Field(alias='titulo', min_length=1)
-    ano: int = Field(gt=0, lt=dt.today().year)
+    ano: int = Field(gt=0, lt=dt.today().year + 1)
     romancista_id: int
 
     @computed_field
@@ -77,8 +77,8 @@ class LivroUpdate(BaseModel):
     input_titulo: str | None = Field(
         alias='titulo', default=None, min_length=1
     )
-    ano: int | None = Field(gt=0, lt=dt.today().year, default=None)
-    romancista_id: int | None
+    ano: int | None = Field(gt=0, lt=dt.today().year + 1, default=None)
+    romancista_id: int | None = None
 
     @computed_field
     def titulo(self) -> str:
@@ -102,12 +102,10 @@ class RomancistaResponse(BaseModel):
 
 
 class RomancistaUpdate(BaseModel):
-    input_nome: str | None = Field(alias='nome', default=None, min_length=1)
+    input_nome: str = Field(alias='nome', min_length=1)
 
     @computed_field
     def nome(self) -> str:
-        if not self.input_nome:
-            return None
         return func_sanitiza_espacos_e_minuscula(self.input_nome)
 
 

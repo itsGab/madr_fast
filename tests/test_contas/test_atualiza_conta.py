@@ -104,7 +104,7 @@ def test_atualiza_conflito_username_e_email_ja_existem(
     assert response.json() == {'detail': 'Conta já consta no MADR'}
 
 
-def test_atualiza_campos_em_branco_menos_username(client, usuario, token):
+def test_atualiza_campos_vazios_menos_username(client, usuario, token):
     # campo: username
     campo_atualizado = {'username': 'atualizado'}
     output = {
@@ -124,7 +124,7 @@ def test_atualiza_campos_em_branco_menos_username(client, usuario, token):
     assert response.json() == output
 
 
-def test_atualiza_campos_em_branco_menos_email(client, usuario, token):
+def test_atualiza_campos_vazios_menos_email(client, usuario, token):
     # campo: email
     campo_atualizado = {'email': 'atual@lizado.com'}
     output = {
@@ -144,9 +144,7 @@ def test_atualiza_campos_em_branco_menos_email(client, usuario, token):
     assert response.json() == output
 
 
-def test_atualiza_campos_em_branco_menos_senha(
-    client, usuario, token, session
-):
+def test_atualiza_campos_vazios_menos_senha(client, usuario, token, session):
     # campo: senha
     campo_atualizado = {'senha': 'nova_senha'}
     output = {

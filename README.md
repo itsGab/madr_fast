@@ -11,7 +11,7 @@
 ---
 # Tarefas sendo feitas:
 
-## tarefas do dia 06/08
+## tarefas do dia 07/08
 - fazer read para livros
 - fazer read para romancistas
 - verificar relacionamento do banco de dados
@@ -26,21 +26,9 @@
     - read
         - codigo
         - teste
-    - update (patch) 
-        - codigo
-        - teste
-    - delete
-        - codigo
-        - teste
 - romancistas:
     - crud:
         - read
-            - codigo
-            - teste
-        - update (patch) 
-            - codigo
-            - teste
-        - delete
             - codigo
             - teste
 - security:

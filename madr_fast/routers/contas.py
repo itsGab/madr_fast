@@ -89,10 +89,6 @@ def atualiza_conta(
         )
     )
     if check_db:  # TODO: REDUNDANCIA, VERIFICAR COM CALMA
-        # if (
-        #     check_db.username == usuario.username
-        #     or check_db.email == usuario.email
-        # ):
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT,
             detail='Conta já consta no MADR',
@@ -101,8 +97,8 @@ def atualiza_conta(
     if usuario.senha:
         usuario.senha = get_password_hash(usuario.senha)
 
-    for key, value in usuario.model_dump(exclude_none=True).items():
-        setattr(usuario_db, key, value)
+    for chave, valor in usuario.model_dump(exclude_none=True).items():
+        setattr(usuario_db, chave, valor)
 
     session.add(usuario_db)
     session.commit()

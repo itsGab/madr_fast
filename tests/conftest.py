@@ -108,3 +108,29 @@ def livro(session, romancista):
     session.refresh(livro)
 
     return livro
+
+
+@pytest.fixture
+def outro_romancista(session):
+    romancista = Romancista(nome='cleber')
+
+    session.add(romancista)
+    session.commit()
+    session.refresh(romancista)
+
+    return romancista
+
+
+@pytest.fixture
+def outro_livro(session, outro_romancista):
+    livro = Livro(
+        titulo='o ultimo romantico 2',
+        ano=2005,
+        romancista_id=outro_romancista.id,
+    )
+
+    session.add(livro)
+    session.commit()
+    session.refresh(livro)
+
+    return livro

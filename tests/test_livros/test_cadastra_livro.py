@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 
-def test_cadastra_livro_retorno_criado_e_schema(client, romancista, token):
+def test_cadastra_livro_retorna_criado_e_schema(client, romancista, token):
     json_input = {
         'titulo': 'livro de teste',
         'ano': 1999,
