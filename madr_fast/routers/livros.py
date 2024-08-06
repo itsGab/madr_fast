@@ -7,19 +7,22 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from madr_fast.database import get_session
-from madr_fast.models import Livro, Romancista
+from madr_fast.models import Livro, Romancista, Usuario
 from madr_fast.schemas import LivroResponse, LivroSchema
+from madr_fast.security import get_current_user
 
 router = APIRouter(prefix='/livros', tags=['livros'])
 
 T_Session = Annotated[Session, Depends(get_session)]
+T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 
 
 # CREATE ---
-@router.post('/', response_model=LivroResponse)
+@router.post('/', response_model=LivroResponse, status_code=HTTPStatus.CREATED)
 def cadastrar_livro(
     livro: LivroSchema,
     session: T_Session,
+    usuario_atual: T_CurrentUser,
 ):
     # verificar por titulo se o livro ja existe no database
     check_db = session.scalar(

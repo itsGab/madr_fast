@@ -7,7 +7,7 @@ from sqlalchemy.pool import StaticPool
 
 from madr_fast.app import app
 from madr_fast.database import get_session
-from madr_fast.models import Usuario, table_registry
+from madr_fast.models import Livro, Romancista, Usuario, table_registry
 from madr_fast.security import get_password_hash
 
 
@@ -84,3 +84,27 @@ def token(client, usuario):
     )
 
     return response.json()['access_token']
+
+
+@pytest.fixture
+def romancista(session):
+    romancista = Romancista(nome='jorge')
+
+    session.add(romancista)
+    session.commit()
+    session.refresh(romancista)
+
+    return romancista
+
+
+@pytest.fixture
+def livro(session, romancista):
+    livro = Livro(
+        titulo='o ultimo romantico', ano=2000, romancista_id=romancista.id
+    )
+
+    session.add(livro)
+    session.commit()
+    session.refresh(livro)
+
+    return livro

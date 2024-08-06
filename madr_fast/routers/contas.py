@@ -74,6 +74,7 @@ def atualiza_conta(
     usuario_db = session.scalar(
         select(Usuario).where(Usuario.id == id_usuario)
     )
+
     # verifica username ou email repetido
     check_db = session.scalar(
         select(Usuario).where(
@@ -88,18 +89,13 @@ def atualiza_conta(
         )
     )
     if check_db:  # TODO: REDUNDANCIA, VERIFICAR COM CALMA
-        if (
-            check_db.username == usuario.username
-            or check_db.email == usuario.email
-        ):
-            raise HTTPException(
-                status_code=HTTPStatus.CONFLICT,
-                detail='Conta já consta no MADR',
-            )
-
-    if not usuario_db:
+        # if (
+        #     check_db.username == usuario.username
+        #     or check_db.email == usuario.email
+        # ):
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='Usuário não encontrado'
+            status_code=HTTPStatus.CONFLICT,
+            detail='Conta já consta no MADR',
         )
 
     if usuario.senha:

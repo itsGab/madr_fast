@@ -203,3 +203,25 @@ def test_atualiza_email_invalido(client, usuario, token):
         response.json()['detail'][0]['msg'] == 'value is not a valid email'
         ' address: An email address must have an @-sign.'
     )
+
+
+def test_atualiza_conta_username_str_vazia_retorna_erro(
+    client, usuario, token
+):
+    dados_atualizados = {
+        'username': '',
+        'email': 'atual@lizado.com',
+        'senha': 'segredo',
+    }
+
+    response = client.put(
+        f'/contas/{usuario.id}',
+        headers={'Authorization': f'Bearer {token}'},
+        json=dados_atualizados,
+    )
+
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert (
+        response.json()['detail'][0]['msg']
+        == 'String should have at least 1 character'
+    )

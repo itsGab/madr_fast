@@ -119,3 +119,22 @@ def test_registra_email_invalido_IMPLEMENTAR(client):
         response.json()['detail'][0]['msg'] == 'value is not a valid email'
         ' address: An email address must have an @-sign.'
     )
+
+
+def test_registra_conta_username_str_vazia_retorna_erro(client):
+    json_input = {
+        'username': '',
+        'email': 'usuario@de.teste',
+        'senha': 'segredo-de-usuario',
+    }
+
+    response = client.post(
+        '/contas',
+        json=json_input,
+    )
+
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    assert (
+        response.json()['detail'][0]['msg']
+        == 'String should have at least 1 character'
+    )

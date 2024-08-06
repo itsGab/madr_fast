@@ -19,7 +19,7 @@ class Message(BaseModel):
 
 # Usuario ---
 class UsuarioSchema(BaseModel):
-    input_username: str = Field(alias='username')
+    input_username: str = Field(alias='username', min_length=1)
     email: EmailStr
     senha: str
 
@@ -42,7 +42,7 @@ class UsuarioResponse(BaseModel):
 
 
 class UsuarioUpdate(BaseModel):
-    input_username: str = Field(alias='username', default=None)
+    input_username: str = Field(alias='username', default=None, min_length=1)
     email: EmailStr | None = None
     senha: str | None = None
 
@@ -57,7 +57,7 @@ class UsuarioUpdate(BaseModel):
 
 # Livro ---
 class LivroSchema(BaseModel):
-    input_titulo: str = Field(alias='titulo')
+    input_titulo: str = Field(alias='titulo', min_length=1)
     ano: int = Field(gt=0, lt=dt.today().year)
     romancista_id: int
 
@@ -74,7 +74,9 @@ class LivroResponse(BaseModel):
 
 
 class LivroUpdate(BaseModel):
-    input_titulo: str | None = Field(alias='titulo', default=None)
+    input_titulo: str | None = Field(
+        alias='titulo', default=None, min_length=1
+    )
     ano: int | None = Field(gt=0, lt=dt.today().year, default=None)
     romancista_id: int | None
 
@@ -87,7 +89,7 @@ class LivroUpdate(BaseModel):
 
 # Romancista ---
 class RomancistaSchema(BaseModel):
-    input_nome: str = Field(alias='nome')
+    input_nome: str = Field(alias='nome', min_length=1)
 
     @computed_field
     def nome(self) -> str:
@@ -100,7 +102,7 @@ class RomancistaResponse(BaseModel):
 
 
 class RomancistaUpdate(BaseModel):
-    input_nome: str | None = Field(alias='nome', default=None)
+    input_nome: str | None = Field(alias='nome', default=None, min_length=1)
 
     @computed_field
     def nome(self) -> str:

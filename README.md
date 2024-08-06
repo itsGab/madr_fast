@@ -1,40 +1,31 @@
 # Pontos gerais do projeto (e comentarios)
 - a maior parte sera escrita em portgues por opcao
-- todo: talvez seja interessante fazer a "traducao" pro ingles
+- talvez seja interessante fazer a "traducao" pro ingles
 - a falta de acentuacao eh preguica de mudar a config do teclado toda hora
-- todo: talvez revise acentuacao depois
+- talvez revise acentuacao depois
 - no final, revisar o codigo e propor melhorias
 - tentar deixar codigo comentado para fins de estudo
-- desenvolver um readme bom
+- desenvolver um readme bom (depois que acabar a parte do codigo)
 
 
 ---
 # Tarefas sendo feitas:
 
-## terminar esses por primeiro
-- pensar: em mudar `registra` para `cadastra` em contas
-- testes para cadastra livro
-- testes para cadastra romancistas
-
-## seguir para esses depois
+## tarefas do dia 06/08
 - fazer read para livros
 - fazer read para romancistas
 - verificar relacionamento do banco de dados
-- escrever os testes para leitura de livros
+- escrever os testes para read de livros
 - escrever os testes para leitura de romancistas
 
 
 ---
 # Lista de tarefas gerais (o que ainda falta) :
-- contas: mudar nome do create ???
 - relacionamento do db: ver se esta funcionando direito
 - livros - crud:
-    - create 
-        - codigo: FEITO
-        - teste: proximo
     - read
-        - codigo: FEITO
-        - teste: proximo
+        - codigo
+        - teste
     - update (patch) 
         - codigo
         - teste
@@ -43,12 +34,9 @@
         - teste
 - romancistas:
     - crud:
-        - create 
-            - codigo: FEITO
-            - teste: proximo
         - read
-            - codigo: FEITO
-            - teste: proximo
+            - codigo
+            - teste
         - update (patch) 
             - codigo
             - teste
