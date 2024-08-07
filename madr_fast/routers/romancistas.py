@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.exceptions import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -10,6 +10,7 @@ from madr_fast.database import get_session
 from madr_fast.models import Romancista, Usuario
 from madr_fast.schemas import (
     Message,
+    RomancistaList,
     RomancistaResponse,
     RomancistaSchema,
     RomancistaUpdate,
@@ -20,6 +21,10 @@ router = APIRouter(prefix='/romancistas', tags=['romancistas'])
 
 T_Session = Annotated[Session, Depends(get_session)]
 T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
+
+# configs para query (para definir paginacao)
+offset_std = 0
+limit_std = 20
 
 
 # CREATE ---
@@ -52,7 +57,36 @@ def cadastra_romancista(
 
 
 # READ ---
-# read list?
+# por id
+@router.get('/{romancista_id}', response_model=RomancistaResponse)
+def busca_romancistas_por_id(
+    romancista_id: int,
+    session: T_Session,
+):
+    romancista = session.scalar(
+        select(Romancista).where(Romancista.id == romancista_id)
+    )
+    if not romancista:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail='Romancista não consta no MADR',
+        )
+    return romancista
+
+
+# por query
+@router.get('/query/', response_model=RomancistaList)
+def busca_romancistas_por_query(session: T_Session, nome: str = Query(None)):
+    query = select(Romancista)
+
+    if nome:
+        query = query.filter(Romancista.nome.contains(nome))
+
+    romancistas = session.scalars(
+        query.offset(offset_std).limit(limit_std)
+    ).all()
+
+    return {'romancistas': romancistas}
 
 
 # UPDATE (PATCH) ---

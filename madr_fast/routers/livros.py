@@ -1,20 +1,30 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.exceptions import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from madr_fast.database import get_session
 from madr_fast.models import Livro, Romancista, Usuario
-from madr_fast.schemas import LivroResponse, LivroSchema, LivroUpdate, Message
+from madr_fast.schemas import (
+    LivroList,
+    LivroResponse,
+    LivroSchema,
+    LivroUpdate,
+    Message,
+)
 from madr_fast.security import get_current_user
 
 router = APIRouter(prefix='/livros', tags=['livros'])
 
 T_Session = Annotated[Session, Depends(get_session)]
 T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
+
+# configs para query (para definir paginacao)
+offset_std = 0
+limit_std = 20
 
 
 # CREATE ---
@@ -55,7 +65,54 @@ def cadastra_livro(
 
 
 # READ ---
-# read list?
+# read por id
+@router.get(
+    '/{livro_id}', response_model=LivroResponse, status_code=HTTPStatus.OK
+)
+def busca_livro_por_id(livro_id: int, session: T_Session):
+    livro = session.scalar(select(Livro).where(Livro.id == livro_id))
+
+    if not livro:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Livro não consta no MADR'
+        )
+
+    return livro
+
+
+# read por query
+@router.get('/query/', response_model=LivroList, status_code=HTTPStatus.OK)
+def busca_livros_por_query(
+    session: T_Session,
+    titulo: str = Query(None),
+    ano: str = Query(None),
+):
+    query = select(Livro)
+
+    if titulo:
+        query = query.filter(Livro.titulo.contains(titulo))
+    if ano:
+        query = query.filter(Livro.ano == ano)
+
+    livros = session.scalars(query.offset(offset_std).limit(limit_std)).all()
+
+    # if not livros:
+    #     raise HTTPException(
+    #         status_code=HTTPStatus.NOT_FOUND,
+    #         detail='Livros não constam no MADR',
+    #     )
+
+    return {'livros': livros}
+
+
+# TODO: READ POR ROMANCISTA ID ***
+@router.get(
+    '/{romancista_id}',
+    response_model=LivroList,
+    status_code=HTTPStatus.OK,
+    include_in_schema=False,
+)
+def busca_por_romancista_id(): ...
 
 
 # UPDATE (PATCH) ---

@@ -66,11 +66,12 @@ class LivroSchema(BaseModel):
         return func_sanitiza_espacos_e_minuscula(self.input_titulo)
 
 
-class LivroResponse(BaseModel):
-    titulo: str
-    ano: int
+class LivroResponse(LivroSchema):
     id: int
-    romancista_id: int
+
+
+class LivroList(BaseModel):
+    livros: list[LivroResponse]
 
 
 class LivroUpdate(BaseModel):
@@ -96,9 +97,12 @@ class RomancistaSchema(BaseModel):
         return func_sanitiza_espacos_e_minuscula(self.input_nome)
 
 
-class RomancistaResponse(BaseModel):
+class RomancistaResponse(RomancistaSchema):
     id: int
-    nome: str
+
+
+class RomancistaList(BaseModel):
+    romancistas: list[RomancistaResponse]
 
 
 class RomancistaUpdate(BaseModel):

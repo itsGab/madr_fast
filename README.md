@@ -12,8 +12,6 @@
 # Tarefas sendo feitas:
 
 ## tarefas do dia 07/08
-- fazer read para livros
-- fazer read para romancistas
 - verificar relacionamento do banco de dados
 - escrever os testes para read de livros
 - escrever os testes para leitura de romancistas
@@ -24,17 +22,17 @@
 - relacionamento do db: ver se esta funcionando direito
 - livros - crud:
     - read
-        - codigo
         - teste
-- romancistas:
-    - crud:
-        - read
-            - codigo
-            - teste
+- romancistas - crud:
+    - read
+        - teste
 - security:
     - revisar
-    - fazer testes
 - fazer a migracao de banco de dados para postgres
 - conteinerizar a aplicacao no docker
+- rodar testes novamente
 - terminar a cobertura de testes se necessario
 - revisar, melhorar e comentar o codigo (para fins de estudo)
+
+# RESOLVER:
+ -> NOS "GETS": Deve paginar os resultados maiores que 20
