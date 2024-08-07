@@ -70,6 +70,30 @@ def test_busca_livro_por_query_filtra_ano_retorna_lista(client, session):
     assert len(response.json()['livros']) == num_livros_de_2001
 
 
+def test_busca_livro_por_query_filtra_combinado_retorna_lista(
+    client, session, livro
+):
+    # factory
+    session.bulk_save_objects(LivroFactory.create_batch(3, ano='2000'))
+    session.bulk_save_objects(LivroFactory.create_batch(5, ano='2001'))
+
+    response = client.get(
+        f'/livros/query/?titulo={livro.titulo}&ano={livro.ano}'
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'livros': [
+            {
+                'id': livro.id,
+                'titulo': livro.titulo,
+                'ano': livro.ano,
+                'romancista_id': livro.romancista_id,
+            }
+        ]
+    }
+
+
 def test_busca_livro_por_query_deve_retorna_paginacao_maiores_que_20(
     client, session
 ):

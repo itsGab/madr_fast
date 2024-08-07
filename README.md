@@ -13,19 +13,10 @@
 
 ## tarefas do dia 07/08
 - verificar relacionamento do banco de dados
-- escrever os testes para read de livros
-- escrever os testes para leitura de romancistas
-
 
 ---
 # Lista de tarefas gerais (o que ainda falta) :
 - relacionamento do db: ver se esta funcionando direito
-- livros - crud:
-    - read
-        - teste
-- romancistas - crud:
-    - read
-        - teste
 - security:
     - revisar
 - fazer a migracao de banco de dados para postgres
