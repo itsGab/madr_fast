@@ -124,7 +124,7 @@ def outro_romancista(session):
 @pytest.fixture
 def outro_livro(session, outro_romancista):
     livro = Livro(
-        titulo='o ultimo romantico 2',
+        titulo='mais romantico mais furioso',
         ano=2005,
         romancista_id=outro_romancista.id,
     )

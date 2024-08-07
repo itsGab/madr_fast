@@ -105,9 +105,9 @@ def busca_livros_por_query(
     return {'livros': livros}
 
 
-# TODO: READ POR ROMANCISTA ID ***
+#  TODO: Implementar GET de livro por romancista_id !!!
 @router.get(
-    '/{romancista_id}',
+    '/por_romancista/{romancista_id}',
     response_model=LivroList,
     status_code=HTTPStatus.OK,
     include_in_schema=False,
