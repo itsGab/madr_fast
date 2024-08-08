@@ -60,8 +60,8 @@ def test_busca_livro_por_query_filtra_nome_parcial_retorna_lista(
 
 def test_busca_livro_por_query_filtra_ano_retorna_lista(client, session):
     # factory
-    session.bulk_save_objects(LivroFactory.create_batch(3, ano='1999'))
-    session.bulk_save_objects(LivroFactory.create_batch(5, ano='2001'))
+    session.bulk_save_objects(LivroFactory.create_batch(3, ano=1999))
+    session.bulk_save_objects(LivroFactory.create_batch(5, ano=2001))
 
     response = client.get(f'/livros/query/?ano={2001}')
 
