@@ -46,7 +46,7 @@ def cadastra_livro(
             detail='Livro já consta no MADR',
         )
 
-    # verificar se o romancista existe no banco de dados
+    # verifica se o romancista existe no banco de dados
     check_romancista = session.scalar(
         select(Romancista).where(Romancista.id == livro.romancista_id)
     )
@@ -105,12 +105,12 @@ def busca_livros_por_query(
     return {'livros': livros}
 
 
-# ! TODO: Implementar GET de livro por romancista_id !
+# TODO: Implementar GET de livro por romancista_id !
 @router.get(
     '/por_romancista/{romancista_id}',
     response_model=LivroList,
     status_code=HTTPStatus.OK,
-    include_in_schema=False,
+    include_in_schema=False,  # para nao aparecer na documentacao
 )
 def busca_por_romancista_id(): ...
 
@@ -134,14 +134,26 @@ def altera_livro(
             status_code=HTTPStatus.NOT_FOUND, detail='Livro não consta no MADR'
         )
 
-    # verifica se o titulo do livro nao eh nulo (None) e
-    # verifica se o novo titulo do ja existe no banco de dados
+    # verifica validade do titulo atualizado
     if livro_update.titulo and session.scalar(
         select(Livro).where(Livro.titulo == livro_update.titulo)
     ):
         raise HTTPException(  # caso ja exista, levanta conflict
             status_code=HTTPStatus.CONFLICT, detail='Título já consta no MADR'
         )
+
+    # verifica se o romancista existe no banco de dados
+    if livro_update.romancista_id:
+        check_romancista = session.scalar(
+            select(Romancista).where(
+                Romancista.id == livro_update.romancista_id
+            )
+        )
+        if not check_romancista:
+            raise HTTPException(  # caso id nao exista, levanta not found
+                status_code=HTTPStatus.NOT_FOUND,
+                detail='Romancista não consta no MADR',
+            )
 
     # atualiza os dados do livro para campos diferentes de None
     for chave, valor in livro_update.model_dump(exclude_none=True).items():

@@ -19,7 +19,7 @@ from madr_fast.security import (
 # rota
 router = APIRouter(prefix='/auth', tags=['autenticacao'])
 
-# types annotated
+# tipos annotated
 T_FormData = Annotated[OAuth2PasswordRequestForm, Depends()]
 T_Session = Annotated[Session, Depends(get_session)]
 T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
@@ -27,28 +27,37 @@ T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 
 @router.post('/token', response_model=Token)
 def login_para_token_de_acesso(form_data: T_FormData, session: T_Session):
+    # pega o usuario no database
     usuario_db = session.scalar(
         select(Usuario).where(Usuario.email == form_data.username)
     )
 
+    # verifica se usuario exista no banco de dados
     if not usuario_db:
-        raise HTTPException(
+        raise HTTPException(  # caso nao exista, levanta bad request
             status_code=HTTPStatus.BAD_REQUEST,
             detail='Email ou senha incorretos',
         )
+
+    # verifica se o password combina
     if not verify_password(form_data.password, usuario_db.senha):
-        raise HTTPException(
+        raise HTTPException(  # caso nao combine, levanta bad request
             status_code=HTTPStatus.BAD_REQUEST,
             detail='Email ou senha incorretos',
         )
+
+    # gera e retorna um token de acesso
     token_de_acesso = create_access_token(data={'sub': usuario_db.email})
     return {'access_token': token_de_acesso, 'token_type': 'bearer'}
 
 
 @router.post('/refresh_token', response_model=Token)
 def atualiza_token_de_acesso(usuario_atual: T_CurrentUser):
+    # com usuario atual, dentro do tempo de expiracao
+    # gera um novo token de acesso
     novo_token_de_acesso = create_access_token(
         data={'sub': usuario_atual.email}
     )
 
+    # retorna o token de acesso atualizado
     return {'access_token': novo_token_de_acesso, 'token_type': 'bearer'}

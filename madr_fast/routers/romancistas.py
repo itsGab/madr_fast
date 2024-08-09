@@ -27,7 +27,7 @@ offset_std = 0
 limit_std = 20
 
 
-# CREATE ---
+# * CREATE ---
 @router.post(
     '/',
     response_model=RomancistaPublic,
@@ -43,31 +43,33 @@ def cadastra_romancista(
         select(Romancista).where(Romancista.nome == romancista.nome)
     )
     if check_db:
-        raise HTTPException(
+        raise HTTPException(  # caso exista, levanta conflict
             status_code=HTTPStatus.CONFLICT,
             detail='Romancista já consta no MADR',
         )
 
+    # guarda dados do romancista no banco de dados
     romancista_db = Romancista(nome=romancista.nome)
-    (session.add(romancista_db),)
+    session.add(romancista_db)
     session.commit()
     session.refresh(romancista_db)
 
     return romancista_db
 
 
-# READ ---
+# * READ ---
 # por id
 @router.get('/{romancista_id}', response_model=RomancistaPublic)
 def busca_romancistas_por_id(
     romancista_id: int,
     session: T_Session,
 ):
+    # verifica se existe romancista por romancista_id
     romancista = session.scalar(
         select(Romancista).where(Romancista.id == romancista_id)
     )
     if not romancista:
-        raise HTTPException(
+        raise HTTPException(  # caso nao exista, levanta not found
             status_code=HTTPStatus.NOT_FOUND,
             detail='Romancista não consta no MADR',
         )
@@ -79,17 +81,20 @@ def busca_romancistas_por_id(
 def busca_romancistas_por_query(session: T_Session, nome: str = Query(None)):
     query = select(Romancista)
 
+    # monta a query
     if nome:
         query = query.filter(Romancista.nome.contains(nome))
 
+    # aplica a query
     romancistas = session.scalars(
         query.offset(offset_std).limit(limit_std)
     ).all()
 
+    # retorna lista de romancistas
     return {'romancistas': romancistas}
 
 
-# UPDATE (PATCH) ---
+# * UPDATE (PATCH) ---
 @router.patch(
     '/{romancista_id}',
     response_model=RomancistaPublic,
@@ -108,18 +113,16 @@ def altera_romancista(
 
     # verifica se o romancista existe no banco de dados
     if not romancista_db:
-        # > levanta a excecao NOT FOUND < se nao existir
-        raise HTTPException(
+        raise HTTPException(  # caso nao exista, levanta not found
             status_code=HTTPStatus.NOT_FOUND,
             detail='Romancista não consta no MADR',
         )
 
-    # verifica se o titulo do livro nao eh nulo (None) e
-    # verifica se o novo nome do romancista causa CONFLITO (ja existe no db)
+    # verifica validade do nome atualizado
     if romancista_update.nome and session.scalar(
         select(Romancista).where(Romancista.nome == romancista_update.nome)
     ):
-        raise HTTPException(
+        raise HTTPException(  # caso ja exista, levanta conflict
             status_code=HTTPStatus.CONFLICT, detail='Nome já consta no MADR'
         )
 
