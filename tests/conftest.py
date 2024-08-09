@@ -8,7 +8,7 @@ from madr_fast.app import app
 from madr_fast.database import get_session
 from madr_fast.models import Livro, Romancista, table_registry
 from madr_fast.security import get_password_hash
-from tests.factories import UserFactory
+from tests.factories import UsuarioFactory
 
 
 @pytest.fixture
@@ -46,7 +46,7 @@ def session(engine):
 @pytest.fixture
 def usuario(session):
     segredo = 'segredo'
-    usuario = UserFactory(senha=get_password_hash(segredo))
+    usuario = UsuarioFactory(senha=get_password_hash(segredo))
     session.add(usuario)
     session.commit()
     session.refresh(usuario)
@@ -59,7 +59,7 @@ def usuario(session):
 @pytest.fixture
 def outro_usuario(session):
     segredo = 'segredo'
-    usuario = UserFactory(senha=get_password_hash(segredo))
+    usuario = UsuarioFactory(senha=get_password_hash(segredo))
     session.add(usuario)
     session.commit()
     session.refresh(usuario)

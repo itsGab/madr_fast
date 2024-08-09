@@ -11,7 +11,7 @@ from madr_fast.models import Romancista, Usuario
 from madr_fast.schemas import (
     Message,
     RomancistaList,
-    RomancistaResponse,
+    RomancistaPublic,
     RomancistaSchema,
     RomancistaUpdate,
 )
@@ -30,7 +30,7 @@ limit_std = 20
 # CREATE ---
 @router.post(
     '/',
-    response_model=RomancistaResponse,
+    response_model=RomancistaPublic,
     status_code=HTTPStatus.CREATED,
 )
 def cadastra_romancista(
@@ -58,7 +58,7 @@ def cadastra_romancista(
 
 # READ ---
 # por id
-@router.get('/{romancista_id}', response_model=RomancistaResponse)
+@router.get('/{romancista_id}', response_model=RomancistaPublic)
 def busca_romancistas_por_id(
     romancista_id: int,
     session: T_Session,
@@ -92,7 +92,7 @@ def busca_romancistas_por_query(session: T_Session, nome: str = Query(None)):
 # UPDATE (PATCH) ---
 @router.patch(
     '/{romancista_id}',
-    response_model=RomancistaResponse,
+    response_model=RomancistaPublic,
     status_code=HTTPStatus.OK,
 )
 def altera_romancista(

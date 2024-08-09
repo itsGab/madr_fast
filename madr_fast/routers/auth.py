@@ -16,7 +16,8 @@ from madr_fast.security import (
     verify_password,
 )
 
-router = APIRouter(prefix='/auth', tags=['auth'])
+# rota
+router = APIRouter(prefix='/auth', tags=['autenticacao'])
 
 # types annotated
 T_FormData = Annotated[OAuth2PasswordRequestForm, Depends()]

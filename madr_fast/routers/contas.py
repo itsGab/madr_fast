@@ -10,20 +10,23 @@ from madr_fast.database import get_session
 from madr_fast.models import Usuario
 from madr_fast.schemas import (
     Message,
-    UsuarioResponse,
+    UsuarioPublic,
     UsuarioSchema,
     UsuarioUpdate,
 )
 from madr_fast.security import get_current_user, get_password_hash
 
+# rota
 router = APIRouter(prefix='/contas', tags=['contas'])
 
+# tipos annotated
 T_Session = Annotated[Session, Depends(get_session)]
 T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 
 
+# * CREATE ---
 @router.post(
-    '/', response_model=UsuarioResponse, status_code=HTTPStatus.CREATED
+    '/', response_model=UsuarioPublic, status_code=HTTPStatus.CREATED
 )
 def registra_conta(usuario: UsuarioSchema, session: T_Session):
     usuario_db = session.scalar(
@@ -57,8 +60,9 @@ def registra_conta(usuario: UsuarioSchema, session: T_Session):
     return usuario_db
 
 
+# * UPDATE ---
 @router.put(
-    '/{id_usuario}', response_model=UsuarioResponse, status_code=HTTPStatus.OK
+    '/{id_usuario}', response_model=UsuarioPublic, status_code=HTTPStatus.OK
 )
 def atualiza_conta(
     id_usuario: int,
@@ -107,6 +111,7 @@ def atualiza_conta(
     return usuario_db
 
 
+# * DELETE ---
 @router.delete(
     '/{id_usuario}', response_model=Message, status_code=HTTPStatus.OK
 )

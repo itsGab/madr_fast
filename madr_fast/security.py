@@ -17,6 +17,7 @@ from madr_fast.models import Usuario
 from madr_fast.schemas import TokenData
 from madr_fast.settings import Settings
 
+# configs
 settings = Settings()
 pwd_context = PasswordHash.recommended()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token', auto_error=False)
@@ -31,9 +32,9 @@ By default, if no HTTP Authorization header is provided, required for
     is not available, instead of erroring out, the dependency result will
     be `None`.
 
-    This is useful when you want to have optional authentication.
-"""
+    This is useful when you want to have optional authentication."""
 
+# tipos annotated
 T_Token = Annotated[str, Depends(oauth2_scheme)]
 T_Session = Annotated[Session, Depends(get_session)]
 

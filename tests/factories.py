@@ -5,7 +5,7 @@ import factory.fuzzy
 from madr_fast.models import Livro, Romancista, Usuario
 
 
-class UserFactory(factory.Factory):
+class UsuarioFactory(factory.Factory):
     class Meta:
         model = Usuario
 
