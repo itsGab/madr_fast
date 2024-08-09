@@ -85,7 +85,7 @@ def busca_livro_por_id(livro_id: int, session: T_Session):
 def busca_livros_por_query(
     session: T_Session,
     titulo: str = Query(None),
-    ano: str = Query(None),
+    ano: int = Query(None),
 ):
     query = select(Livro)
 

@@ -1,16 +1,6 @@
 from http import HTTPStatus
 
-import factory.fuzzy
-
-from madr_fast.models import Romancista
-
-
-# factory de romancista
-class RomancistaFactory(factory.Factory):
-    class Meta:
-        model = Romancista
-
-    nome: str = factory.Faker('name')
+from tests.factories import RomancistaFactory
 
 
 def test_busca_romancista_por_id_retorna_ok_e_schema(client, romancista):

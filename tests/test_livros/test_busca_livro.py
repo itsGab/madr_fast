@@ -1,19 +1,6 @@
 from http import HTTPStatus
-from random import randint
 
-import factory.fuzzy
-
-from madr_fast.models import Livro
-
-
-# factory de livro
-class LivroFactory(factory.Factory):
-    class Meta:
-        model = Livro
-
-    titulo: str = factory.Faker('text')
-    ano: int = randint(1999, 2024)
-    romancista_id = 1
+from tests.factories import LivroFactory
 
 
 def test_busca_livro_por_id_retorna_ok_e_schema(client, outro_livro, livro):
@@ -58,24 +45,37 @@ def test_busca_livro_por_query_filtra_nome_parcial_retorna_lista(
     }
 
 
-def test_busca_livro_por_query_filtra_ano_retorna_lista(client, session):
+def test_busca_livro_por_query_filtra_ano_retorna_lista(
+    client, session, romancista
+):
+    ano_alvo = 2001
+    num_livros_alvo = 5
     # factory
-    session.bulk_save_objects(LivroFactory.create_batch(3, ano=1999))
-    session.bulk_save_objects(LivroFactory.create_batch(5, ano=2001))
+    session.bulk_save_objects(
+        LivroFactory.create_batch(3, ano=1999, romancista_id=romancista.id)
+    )
+    session.bulk_save_objects(
+        LivroFactory.create_batch(
+            num_livros_alvo, ano=ano_alvo, romancista_id=romancista.id
+        )
+    )
 
     response = client.get(f'/livros/query/?ano={2001}')
 
-    num_livros_de_2001 = 5
     assert response.status_code == HTTPStatus.OK
-    assert len(response.json()['livros']) == num_livros_de_2001
+    assert len(response.json()['livros']) == num_livros_alvo
 
 
 def test_busca_livro_por_query_filtra_combinado_retorna_lista(
-    client, session, livro
+    client, session, livro, romancista
 ):
     # factory
-    session.bulk_save_objects(LivroFactory.create_batch(3, ano='2000'))
-    session.bulk_save_objects(LivroFactory.create_batch(5, ano='2001'))
+    session.bulk_save_objects(
+        LivroFactory.create_batch(3, ano=2000, romancista_id=romancista.id)
+    )
+    session.bulk_save_objects(
+        LivroFactory.create_batch(5, ano=2001, romancista_id=romancista.id)
+    )
 
     response = client.get(
         f'/livros/query/?titulo={livro.titulo}&ano={livro.ano}'
@@ -95,10 +95,12 @@ def test_busca_livro_por_query_filtra_combinado_retorna_lista(
 
 
 def test_busca_livro_por_query_deve_retorna_paginacao_maiores_que_20(
-    client, session
+    client, session, romancista
 ):
     # factory
-    session.bulk_save_objects(LivroFactory.create_batch(30))
+    session.bulk_save_objects(
+        LivroFactory.create_batch(30, romancista_id=romancista.id)
+    )
 
     response = client.get('/livros/query/')
 
@@ -107,9 +109,13 @@ def test_busca_livro_por_query_deve_retorna_paginacao_maiores_que_20(
     assert len(response.json()['livros']) == limite_por_pagina
 
 
-def test_busca_livro_por_query_vazias_retorna_lista_total(client, session):
+def test_busca_livro_por_query_vazias_retorna_lista_total(
+    client, session, romancista
+):
     # factory
-    session.bulk_save_objects(LivroFactory.create_batch(7))
+    session.bulk_save_objects(
+        LivroFactory.create_batch(7, romancista_id=romancista.id)
+    )
 
     response = client.get('/livros/query/')
 

@@ -1,4 +1,3 @@
-import factory
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -7,17 +6,9 @@ from testcontainers.postgres import PostgresContainer
 
 from madr_fast.app import app
 from madr_fast.database import get_session
-from madr_fast.models import Livro, Romancista, Usuario, table_registry
+from madr_fast.models import Livro, Romancista, table_registry
 from madr_fast.security import get_password_hash
-
-
-class UserFactory(factory.Factory):
-    class Meta:
-        model = Usuario
-
-    username = factory.Sequence(lambda n: f'usuario{n}')
-    email = factory.LazyAttribute(lambda obj: f'{obj.username}@teste.com')
-    senha = factory.LazyAttribute(lambda obj: f'{obj.username}-segredo')
+from tests.factories import UserFactory
 
 
 @pytest.fixture
