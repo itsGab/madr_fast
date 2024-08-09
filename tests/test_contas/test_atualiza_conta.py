@@ -72,7 +72,9 @@ def test_atualiza_conflito_username_ja_existe(
     )
 
     assert response.status_code == HTTPStatus.CONFLICT
-    assert response.json() == {'detail': 'Conta já consta no MADR'}
+    assert response.json() == {
+        'detail': 'Username ou e-mail já consta no MADR'
+    }
 
 
 def test_atualiza_conflito_email_ja_exite(
@@ -85,7 +87,9 @@ def test_atualiza_conflito_email_ja_exite(
     )
 
     assert response.status_code == HTTPStatus.CONFLICT
-    assert response.json() == {'detail': 'Conta já consta no MADR'}
+    assert response.json() == {
+        'detail': 'Username ou e-mail já consta no MADR'
+    }
 
 
 def test_atualiza_conflito_username_e_email_ja_existem(
@@ -101,7 +105,9 @@ def test_atualiza_conflito_username_e_email_ja_existem(
     )
 
     assert response.status_code == HTTPStatus.CONFLICT
-    assert response.json() == {'detail': 'Conta já consta no MADR'}
+    assert response.json() == {
+        'detail': 'Username ou e-mail já consta no MADR'
+    }
 
 
 def test_atualiza_campos_vazios_menos_username(client, usuario, token):

@@ -92,6 +92,25 @@ def test_altera_livro_id_nao_cadastrado_retorna_erro(
     assert response.json() == {'detail': 'Livro não consta no MADR'}
 
 
+def test_altera_livro_romancista_id_nao_cadastrado_retorna_erro(
+    client, livro, romancista, token
+):
+    json_input = {
+        'titulo': 'titulo atualizado',
+        'ano': 2024,
+        'romancista_id': romancista.id + 1,
+    }
+
+    response = client.patch(
+        f'/livros/{livro.id}',
+        headers={'Authorization': f'Bearer {token}'},
+        json=json_input,
+    )
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'Romancista não consta no MADR'}
+
+
 def test_altera_livro_titulo_ja_existe_retorna_conflito(
     client, livro, outro_livro, romancista, token
 ):
