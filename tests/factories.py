@@ -18,13 +18,13 @@ class RomancistaFactory(factory.Factory):
     class Meta:
         model = Romancista
 
-    nome: str = factory.Faker('name')
+    nome: str = factory.Faker('name', locale='pt_BR')
 
 
 class LivroFactory(factory.Factory):
     class Meta:
         model = Livro
 
-    titulo: str = factory.Faker('text')
+    titulo: str = factory.Faker('sentence', nb_words=4, locale='pt_BR')
     ano: int = randint(1999, 2024)
     romancista_id = 1  # romancista valido
