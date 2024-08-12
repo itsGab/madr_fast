@@ -25,6 +25,6 @@ class LivroFactory(factory.Factory):
     class Meta:
         model = Livro
 
-    titulo: str = factory.Faker('sentence', nb_words=4, locale='pt_BR')
+    titulo: str = factory.Sequence(lambda n: f'Livro {n}')
     ano: int = randint(1999, 2024)
     romancista_id = 1  # romancista valido

@@ -25,6 +25,19 @@ def test_busca_livro_por_id_id_nao_cadastrado_retorna_erro(client, livro):
     assert response.json() == {'detail': 'Livro não consta no MADR'}
 
 
+def test_paginacao(client, session, romancista):
+    # factory
+    session.bulk_save_objects(
+        LivroFactory.create_batch(30, romancista_id=romancista.id)
+    )
+
+    response = client.get('/livros/query/')
+
+    tamanho_pagina = 20
+    assert len(response.json()['livros']) == tamanho_pagina
+    assert response.status_code == HTTPStatus.OK
+
+
 def test_busca_livro_por_query_filtra_nome_parcial_retorna_lista(
     client, outro_livro, livro
 ):
@@ -44,7 +57,11 @@ def test_busca_livro_por_query_filtra_nome_parcial_retorna_lista(
                 'ano': livro.ano,
                 'romancista_id': livro.romancista_id,
             }
-        ]
+        ],
+        'página': 1,
+        'páginas': 1,
+        'tamanho': 20,
+        'total': 1,
     }
 
 
@@ -93,7 +110,11 @@ def test_busca_livro_por_query_filtra_combinado_retorna_lista(
                 'ano': livro.ano,
                 'romancista_id': livro.romancista_id,
             }
-        ]
+        ],
+        'página': 1,
+        'páginas': 1,
+        'tamanho': 20,
+        'total': 1,
     }
 
 
@@ -134,7 +155,13 @@ def test_busca_livro_por_query_sem_correspondencia_titulo_retorna_lista_vazia(
     response = client.get(f'/livros/query/?titulo={titulo_sem_correspondecia}')
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {'livros': []}
+    assert response.json() == {
+        'livros': [],
+        'página': 1,
+        'páginas': 0,
+        'tamanho': 20,
+        'total': 0,
+    }
 
 
 def test_busca_livro_por_query_sem_correspondencia_ano_retorna_lista_vazia(
@@ -144,7 +171,13 @@ def test_busca_livro_por_query_sem_correspondencia_ano_retorna_lista_vazia(
     response = client.get(f'/livros/query/?ano={ano_sem_correspondencia}')
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {'livros': []}
+    assert response.json() == {
+        'livros': [],
+        'página': 1,
+        'páginas': 0,
+        'tamanho': 20,
+        'total': 0,
+    }
 
 
 def test_busca_livros_por_romancista_id_ok_e_quantidade_certa(
@@ -178,7 +211,11 @@ def test_busca_livros_por_romancista_id_ok_e_lista_certa(
                 'ano': livro.ano,
                 'romancista_id': livro.romancista_id,
             }
-        ]
+        ],
+        'página': 1,
+        'páginas': 1,
+        'tamanho': 20,
+        'total': 1,
     }
 
 
@@ -188,8 +225,14 @@ def test_busca_livros_por_romancista_id_sem_livros_retorna_lista_vazia(
 ):
     response = client.get(f'/livros/romancista/{romancista.id}')
 
-    assert response.json() == {'livros': []}
     assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'livros': [],
+        'página': 1,
+        'páginas': 0,
+        'tamanho': 20,
+        'total': 0,
+    }
 
 
 # test falha por romancista id

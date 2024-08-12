@@ -3,17 +3,18 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.exceptions import HTTPException
+from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from madr_fast.database import get_session
 from madr_fast.models import Livro, Romancista, Usuario
 from madr_fast.schemas import (
-    LivroList,
     LivroPublic,
     LivroSchema,
     LivroUpdate,
     Message,
+    PaginaLivros,
 )
 from madr_fast.security import get_current_user
 
@@ -85,7 +86,11 @@ def busca_livro_por_id(livro_id: int, session: T_Session):
 
 
 # por query
-@router.get('/query/', response_model=LivroList, status_code=HTTPStatus.OK)
+@router.get(
+    '/query/',
+    response_model=PaginaLivros[LivroPublic],
+    status_code=HTTPStatus.OK,
+)
 def busca_livros_por_query(
     session: T_Session,
     titulo: str = Query(None),
@@ -98,18 +103,14 @@ def busca_livros_por_query(
     if ano:
         query = query.filter(Livro.ano == ano)
 
-    # aplica a query
-    livros = session.scalars(query.offset(offset_std).limit(limit_std)).all()
-
-    # retorna lista de livros
-    return {'livros': livros}
+    # retorna paginacao de livros
+    return paginate(session, query=query)
 
 
 @router.get(
     '/romancista/{romancista_id}',
-    response_model=LivroList,
+    response_model=PaginaLivros[LivroPublic],
     status_code=HTTPStatus.OK,
-    include_in_schema=False,  # para nao aparecer na documentacao
 )
 def busca_livros_por_romancista_id(romancista_id: int, session: T_Session):
     # verifica se existe romancista no banco de dados
@@ -124,10 +125,9 @@ def busca_livros_por_romancista_id(romancista_id: int, session: T_Session):
         )
 
     query = select(Livro).filter(Livro.romancista_id == romancista_id)
-    livros = session.scalars(query.offset(offset_std).limit(limit_std)).all()
 
-    # retorna lista de livros
-    return {'livros': livros}
+    # retorna paginacao de livros
+    return paginate(session, query=query)
 
 
 # * UPDATE (PATCH) ---

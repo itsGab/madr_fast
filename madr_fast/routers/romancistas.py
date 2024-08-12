@@ -3,6 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.exceptions import HTTPException
+from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -10,7 +11,7 @@ from madr_fast.database import get_session
 from madr_fast.models import Romancista, Usuario
 from madr_fast.schemas import (
     Message,
-    RomancistaList,
+    PaginaRomancistas,
     RomancistaPublic,
     RomancistaSchema,
     RomancistaUpdate,
@@ -77,7 +78,7 @@ def busca_romancistas_por_id(
 
 
 # por query
-@router.get('/query/', response_model=RomancistaList)
+@router.get('/query/', response_model=PaginaRomancistas[RomancistaPublic])
 def busca_romancistas_por_query(session: T_Session, nome: str = Query(None)):
     query = select(Romancista)
 
@@ -85,13 +86,8 @@ def busca_romancistas_por_query(session: T_Session, nome: str = Query(None)):
     if nome:
         query = query.filter(Romancista.nome.contains(nome))
 
-    # aplica a query
-    romancistas = session.scalars(
-        query.offset(offset_std).limit(limit_std)
-    ).all()
-
-    # retorna lista de romancistas
-    return {'romancistas': romancistas}
+    # retorna paginacao de romancistas
+    return paginate(session, query=query)
 
 
 # * UPDATE (PATCH) ---

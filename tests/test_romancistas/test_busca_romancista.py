@@ -33,7 +33,11 @@ def test_busca_romancista_por_query_filtra_nome_parcial_retorna_lista(
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        'romancistas': [{'id': romancista.id, 'nome': romancista.nome}]
+        'romancistas': [{'id': romancista.id, 'nome': romancista.nome}],
+        'página': 1,
+        'páginas': 1,
+        'tamanho': 20,
+        'total': 1,
     }
 
 
@@ -76,4 +80,10 @@ def test_busca_romancista_por_query_sem_correspondencia_retorna_lista_vazia(
     )
 
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {'romancistas': []}
+    assert response.json() == {
+        'romancistas': [],
+        'página': 1,
+        'páginas': 0,
+        'tamanho': 20,
+        'total': 0,
+    }
