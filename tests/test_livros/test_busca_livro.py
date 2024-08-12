@@ -1,5 +1,8 @@
 from http import HTTPStatus
 
+from sqlalchemy import select
+
+from madr_fast.models import Livro
 from tests.factories import LivroFactory
 
 
@@ -142,3 +145,57 @@ def test_busca_livro_por_query_sem_correspondencia_ano_retorna_lista_vazia(
 
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {'livros': []}
+
+
+def test_busca_livros_por_romancista_id_ok_e_quantidade_certa(
+    session, client, romancista, livro, outro_livro
+):
+    session.bulk_save_objects(
+        LivroFactory.create_batch(4, romancista_id=romancista.id)
+    )
+    response = client.get(f'/livros/romancista/{romancista.id}')
+
+    assert response.status_code == HTTPStatus.OK
+
+    check_db = session.scalars(
+        select(Livro).where(Livro.romancista_id == romancista.id)
+    )
+    assert len(check_db.fetchall()) == len(response.json()['livros'])
+
+
+# test lista igual
+def test_busca_livros_por_romancista_id_ok_e_lista_certa(
+    client, romancista, livro, outro_livro
+):
+    response = client.get(f'/livros/romancista/{romancista.id}')
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'livros': [
+            {
+                'id': livro.id,
+                'titulo': livro.titulo,
+                'ano': livro.ano,
+                'romancista_id': livro.romancista_id,
+            }
+        ]
+    }
+
+
+# test falha sem livro por romancista
+def test_busca_livros_por_romancista_id_sem_livros_retorna_lista_vazia(
+    client, romancista
+):
+    response = client.get(f'/livros/romancista/{romancista.id}')
+
+    assert response.json() == {'livros': []}
+    assert response.status_code == HTTPStatus.OK
+
+
+# test falha por romancista id
+def test_busca_livros_por_romancista_id_retorna_erro_nao_cadastrado(client):
+    romancista_id = 1
+    response = client.get(f'/livros/romancista/{romancista_id}')
+
+    assert response.json() == {'detail': 'Romancista não consta no MADR'}
+    assert response.status_code == HTTPStatus.NOT_FOUND

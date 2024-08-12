@@ -11,7 +11,9 @@ from pydantic import (
 
 def valida_e_sanitiza(text):  # pragma: no cover
     if re.search(r'[^\w\s\-.à-ÿÀ-Ÿ]', text, re.UNICODE):
-        raise ValueError('Entrada deve conter apenas letras, números e hífen')
+        raise ValueError(
+            'Entrada deve conter apenas letras, números, ponto e hífen'
+        )
     return ' '.join(text.lower().split())
 
 
@@ -25,7 +27,7 @@ class UsuarioSchema(BaseModel):
     username: str = Field(min_length=1)
     email: EmailStr
     senha: str
-    # TODO: validacao 'username' sem caracteres especiais
+
     _valida_e_sanitiza = field_validator('username')(valida_e_sanitiza)
 
 
@@ -40,7 +42,6 @@ class UsuarioUpdate(BaseModel):
     email: EmailStr | None = None
     senha: str | None = None
 
-    # TODO: validacao 'username' sem caracteres especiais
     _valida_e_sanitiza = field_validator('username')(valida_e_sanitiza)
 
 
@@ -50,7 +51,6 @@ class LivroSchema(BaseModel):
     ano: int = Field(gt=0, lt=dt.today().year + 1)
     romancista_id: int
 
-    # TODO: validacao 'titulo' sem caracteres especiais
     _valida_e_sanitiza = field_validator('titulo')(valida_e_sanitiza)
 
 
@@ -67,14 +67,13 @@ class LivroUpdate(BaseModel):
     ano: int | None = Field(gt=0, lt=dt.today().year + 1, default=None)
     romancista_id: int | None = None
 
-    # TODO: validacao 'titulo' sem caracteres especiais
     _valida_e_sanitiza = field_validator('titulo')(valida_e_sanitiza)
 
 
 # * Romancista ---
 class RomancistaSchema(BaseModel):
     nome: str = Field(min_length=1)
-    # TODO: validacao 'nome' sem caracteres especiais
+
     _valida_e_sanitiza = field_validator('nome')(valida_e_sanitiza)
 
 
@@ -88,7 +87,7 @@ class RomancistaList(BaseModel):
 
 class RomancistaUpdate(BaseModel):
     nome: str = Field(min_length=1)
-    # TODO: validacao 'nome' sem caracteres especiais
+
     _valida_e_sanitiza = field_validator('nome')(valida_e_sanitiza)
 
 
