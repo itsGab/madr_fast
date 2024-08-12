@@ -199,3 +199,21 @@ def test_busca_livros_por_romancista_id_retorna_erro_nao_cadastrado(client):
 
     assert response.json() == {'detail': 'Romancista não consta no MADR'}
     assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_busca_livros_por_romancista_id_paginacao_de_20(
+    session, client, romancista, outro_livro
+):
+    session.bulk_save_objects(
+        LivroFactory.create_batch(22, romancista_id=romancista.id)
+    )
+    response = client.get(f'/livros/romancista/{romancista.id}')
+
+    assert response.status_code == HTTPStatus.OK
+
+    check_db = session.scalars(
+        select(Livro).where(Livro.romancista_id == romancista.id)
+    )
+    num_items = 20
+    assert len(response.json()['livros']) == num_items
+    assert len(check_db.fetchall()) != len(response.json()['livros'])

@@ -105,7 +105,6 @@ def busca_livros_por_query(
     return {'livros': livros}
 
 
-# TODO: Implementar GET de livro por romancista_id !
 @router.get(
     '/romancista/{romancista_id}',
     response_model=LivroList,
@@ -117,15 +116,15 @@ def busca_livros_por_romancista_id(romancista_id: int, session: T_Session):
     check_romancista = session.scalar(
         select(Romancista).where(Romancista.id == romancista_id)
     )
+
     if not check_romancista:
         raise HTTPException(  # caso nao existe, levanta not found
             status_code=HTTPStatus.NOT_FOUND,
             detail='Romancista não consta no MADR',
         )
 
-    livros = session.scalars(
-        select(Livro).where(Livro.romancista_id == romancista_id)
-    )
+    query = select(Livro).filter(Livro.romancista_id == romancista_id)
+    livros = session.scalars(query.offset(offset_std).limit(limit_std)).all()
 
     # retorna lista de livros
     return {'livros': livros}
