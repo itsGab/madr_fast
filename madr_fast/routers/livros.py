@@ -19,7 +19,7 @@ from madr_fast.schemas import (
 from madr_fast.security import get_current_user
 
 # rota
-router = APIRouter(prefix='/livros', tags=['livros'])
+router = APIRouter(prefix='/livros', tags=['Livros'])
 
 # tipos annotated
 T_Session = Annotated[Session, Depends(get_session)]

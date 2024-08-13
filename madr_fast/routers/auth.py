@@ -17,7 +17,7 @@ from madr_fast.security import (
 )
 
 # rota
-router = APIRouter(prefix='/auth', tags=['autenticacao'])
+router = APIRouter(prefix='/auth', tags=['Autenticação'])
 
 # tipos annotated
 T_FormData = Annotated[OAuth2PasswordRequestForm, Depends()]

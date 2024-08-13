@@ -9,12 +9,12 @@ from madr_fast.security import verify_password
 def test_registra_valido_retorna_criado_e_schema(client):
     # data
     json_input = {
-        'username': 'teste-usuario',
+        'username': 'teste usuario',
         'email': 'usuario@de.teste',
         'senha': 'segredo-de-usuario',
     }
     json_output = {  # saida esperada
-        'username': 'teste-usuario',
+        'username': 'teste usuario',
         'email': 'usuario@de.teste',
         'id': 1,
     }
@@ -27,7 +27,7 @@ def test_registra_valido_retorna_criado_e_schema(client):
 
 def test_registra_senha_criptografada(client, session):
     json_input = {
-        'username': 'teste-senha',
+        'username': 'teste senha',
         'email': 'senha@de.teste',
         'senha': 'segredo-de-senha',
     }
@@ -45,12 +45,12 @@ def test_registra_senha_criptografada(client, session):
 
 def test_registra_conflito_dados_ja_existem(client):
     json_input = {
-        'username': 'teste-conflito',
+        'username': 'teste conflito',
         'email': 'conflito@de.teste',
         'senha': 'segredo-de-conflito',
     }
     json_output = {
-        'username': 'teste-conflito',
+        'username': 'teste conflito',
         'email': 'conflito@de.teste',
         'id': 1,
     }
@@ -62,7 +62,7 @@ def test_registra_conflito_dados_ja_existem(client):
 
     # conflito: username repetido
     json_input_username_repetido = {
-        'username': 'teste-conflito',  # repetido
+        'username': 'teste conflito',  # repetido
         'email': 'username-repetido@de.teste',
         'senha': 'segredo-de-username-repetido',
     }
@@ -74,7 +74,7 @@ def test_registra_conflito_dados_ja_existem(client):
 
     # conflito: email repetido
     json_input_email_repetido = {
-        'username': 'teste-email-repetido',
+        'username': 'teste email repetido',
         'email': 'conflito@de.teste',  # repetido
         'senha': 'segredo-de-email-repetido',
     }
@@ -102,9 +102,25 @@ def test_registra_username_sanitizado(client):
     assert response.json() == json_output
 
 
+def test_registra_username_com_caracteres_especias_retorna_erro(client):
+    json_input = {
+        'username': '$uperUsuario',
+        'email': 'sanitizado@de.teste',
+        'senha': 'segredo-de-sanitizado',
+    }
+
+    response = client.post('/contas', json=json_input)
+
+    assert (
+        response.json()['detail'][0]['msg'] == 'Value error, entrada deve'
+        ' conter apenas letras e números'
+    )
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+
+
 def test_registra_email_invalido_IMPLEMENTAR(client):
     json_input = {
-        'username': 'user-test',
+        'username': 'usertest',
         'email': 'email-invalido',
         'senha': 'segredo',
     }

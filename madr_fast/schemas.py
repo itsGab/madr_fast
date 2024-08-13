@@ -7,6 +7,7 @@ from fastapi_pagination.customization import (
     CustomizedPage,
     UseFieldsAliases,
     UseParamsFields,
+    UseName,
 )
 from pydantic import (
     BaseModel,
@@ -16,20 +17,20 @@ from pydantic import (
 )
 
 
-def valida_e_sanitiza(text):  # pragma: no cover
-    if re.search(r'[^\w\s\-.à-ÿÀ-Ÿ]', text, re.UNICODE):
-        raise ValueError(
-            'Entrada deve conter apenas letras, números, ponto e hífen'
-        )
+# * Funcao de validacao e sanitizacao usada nas entradas de texto
+def valida_e_sanitiza(text):
+    if re.search(r'[^\w\s\à-ÿÀ-Ÿ]', text, re.UNICODE):
+        raise ValueError('entrada deve conter apenas letras e números')
     return ' '.join(text.lower().split())
 
 
-# * Base Paginacao ---
+# * Paginacao ---
 tamanho_pagina = 20  # items
 T = TypeVar('T')
 
 PaginaLivros = CustomizedPage[
     Page[T],
+    UseName('PaginaLivros'),
     UseParamsFields(size=tamanho_pagina),
     UseFieldsAliases(
         items='livros',
@@ -41,6 +42,7 @@ PaginaLivros = CustomizedPage[
 
 PaginaRomancistas = CustomizedPage[
     Page[T],
+    UseName('PaginaRomancistas'),
     UseParamsFields(size=tamanho_pagina),
     UseFieldsAliases(
         items='romancistas',
@@ -72,7 +74,7 @@ class UsuarioPublic(BaseModel):
 
 
 class UsuarioUpdate(BaseModel):
-    username: str = Field(default=None, min_length=1)
+    username: str | None = Field(default=None, min_length=1)
     email: EmailStr | None = None
     senha: str | None = None
 

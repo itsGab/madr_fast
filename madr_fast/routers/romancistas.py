@@ -18,7 +18,7 @@ from madr_fast.schemas import (
 )
 from madr_fast.security import get_current_user
 
-router = APIRouter(prefix='/romancistas', tags=['romancistas'])
+router = APIRouter(prefix='/romancistas', tags=['Romancistas'])
 
 T_Session = Annotated[Session, Depends(get_session)]
 T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]

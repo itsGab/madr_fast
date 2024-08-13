@@ -18,7 +18,7 @@ class RomancistaFactory(factory.Factory):
     class Meta:
         model = Romancista
 
-    nome: str = factory.Faker('name', locale='pt_BR')
+    nome: str = factory.Sequence(lambda n: f'Nome {n}')
 
 
 class LivroFactory(factory.Factory):

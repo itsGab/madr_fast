@@ -17,7 +17,7 @@ from madr_fast.schemas import (
 from madr_fast.security import get_current_user, get_password_hash
 
 # rota
-router = APIRouter(prefix='/contas', tags=['contas'])
+router = APIRouter(prefix='/contas', tags=['Contas'])
 
 # tipos annotated
 T_Session = Annotated[Session, Depends(get_session)]
