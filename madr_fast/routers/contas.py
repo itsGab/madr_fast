@@ -27,7 +27,7 @@ T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 # * CREATE ---
 @router.post('/', response_model=UsuarioPublic, status_code=HTTPStatus.CREATED)
 def registra_conta(usuario: UsuarioSchema, session: T_Session):
-    # verifica se ja existe usuario com mesmo username ou email
+    # verifica se já existe usuário com mesmo username ou email
     check_db = session.scalar(
         select(Usuario).where(
             (Usuario.username == usuario.username)
@@ -35,12 +35,12 @@ def registra_conta(usuario: UsuarioSchema, session: T_Session):
         )
     )
     if check_db:
-        raise HTTPException(  # caso existe, levanta conflict
+        raise HTTPException(  # caso exista, levanta conflict
             status_code=HTTPStatus.CONFLICT,
             detail='Conta já consta no MADR',
         )
 
-    # caso nao exista, criptografa a senha e adicona ao banco de dados
+    # caso não exista, criptografa a senha e adiciona ao banco de dados
     hash_da_senha = get_password_hash(usuario.senha)
     usuario_db = Usuario(
         username=usuario.username,
@@ -60,25 +60,25 @@ def registra_conta(usuario: UsuarioSchema, session: T_Session):
 )
 def atualiza_conta(
     id_usuario: int,
-    usuario_atualiza: UsuarioUpdate,  # novos dados para atualizacao
+    usuario_atualiza: UsuarioUpdate,  # novos dados para atualização
     session: T_Session,
     usuario_atual: T_CurrentUser,
 ):
-    # verifica se o atual eh diferente do usuario sendo alterado
+    # verifica se o atual é diferente do usuário sendo alterado
     if usuario_atual.id != id_usuario:
-        raise HTTPException(  # caso usuario diferente, levanta unathorized
+        raise HTTPException(  # caso usuário diferente, levanta unathorized
             status_code=HTTPStatus.UNAUTHORIZED, detail='Não autorizado'
         )
 
-    # pegas os dados do usuario no banco de dados
+    # pega os dados do usuário no banco de dados
     usuario_db = session.scalar(
         select(Usuario).where(Usuario.id == id_usuario)
     )
 
-    # verifica username ou email de atualizacao nao existem no banco de dados
+    # verifica se username ou email de atualização já existem no banco de dados
     check_db = session.scalar(
         select(Usuario).where(
-            (  # condicoes levam em conta o id do usuario
+            (  # as condições levam em conta o id do usuário
                 (Usuario.username == usuario_atualiza.username)
                 & (Usuario.id != usuario_atual.id)
             )
@@ -89,16 +89,16 @@ def atualiza_conta(
         )
     )
     if check_db:
-        raise HTTPException(  # caso existam, levanta conflict
+        raise HTTPException(  # caso exista, levanta conflict
             status_code=HTTPStatus.CONFLICT,
             detail='Username ou e-mail já consta no MADR',
         )
 
-    # caso seja atualizada a senha, gera nova senha criptografada
+    # caso seja mandado nova senha criptografa a senha
     if usuario_atualiza.senha:
         usuario_atualiza.senha = get_password_hash(usuario_atualiza.senha)
 
-    # atualiza os dados do usuario caso sejam diferente de none
+    # atualiza os dados do usuário diferentes de None
     for chave, valor in usuario_atualiza.model_dump(exclude_none=True).items():
         setattr(usuario_db, chave, valor)
 
@@ -117,13 +117,13 @@ def atualiza_conta(
 def deleta_conta(
     id_usuario: int, session: T_Session, usuario_atual: T_CurrentUser
 ):
-    # verifica se o atual eh diferente do usuario sendo deletado
+    # verifica se o atual é diferente do usuário sendo deletado
     if usuario_atual.id != id_usuario:
-        raise HTTPException(  # caso usuario diferente, levanta unathorized
+        raise HTTPException(  # caso usuário diferente, levanta unathorized
             status_code=HTTPStatus.UNAUTHORIZED, detail='Não autorizado'
         )
 
-    # remove os usuario do banco de dados
+    # remove o usuário do banco de dados
     session.delete(usuario_atual)
     session.commit()
 

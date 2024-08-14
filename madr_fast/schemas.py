@@ -6,8 +6,8 @@ from fastapi_pagination import Page
 from fastapi_pagination.customization import (
     CustomizedPage,
     UseFieldsAliases,
-    UseParamsFields,
     UseName,
+    UseParamsFields,
 )
 from pydantic import (
     BaseModel,
@@ -17,15 +17,15 @@ from pydantic import (
 )
 
 
-# * Funcao de validacao e sanitizacao usada nas entradas de texto
+# * Função de validação e sanitização usada nas entradas de texto
 def valida_e_sanitiza(text):
     if re.search(r'[^\w\s\à-ÿÀ-Ÿ]', text, re.UNICODE):
         raise ValueError('entrada deve conter apenas letras e números')
     return ' '.join(text.lower().split())
 
 
-# * Paginacao ---
-tamanho_pagina = 20  # items
+# * Paginação ---
+tamanho_pagina = 20  # itens
 T = TypeVar('T')
 
 PaginaLivros = CustomizedPage[

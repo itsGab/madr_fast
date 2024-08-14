@@ -27,21 +27,21 @@ T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 
 @router.post('/token', response_model=Token)
 def login_para_token_de_acesso(form_data: T_FormData, session: T_Session):
-    # pega o usuario no database
+    # pega o usuário no database
     usuario_db = session.scalar(
         select(Usuario).where(Usuario.email == form_data.username)
     )
 
-    # verifica se usuario exista no banco de dados
+    # verifica se usuário exista no banco de dados
     if not usuario_db:
-        raise HTTPException(  # caso nao exista, levanta bad request
+        raise HTTPException(  # caso não exista, levanta bad request
             status_code=HTTPStatus.BAD_REQUEST,
             detail='Email ou senha incorretos',
         )
 
-    # verifica se o password combina
+    # verifica se a senha combina
     if not verify_password(form_data.password, usuario_db.senha):
-        raise HTTPException(  # caso nao combine, levanta bad request
+        raise HTTPException(  # caso não combine, levanta bad request
             status_code=HTTPStatus.BAD_REQUEST,
             detail='Email ou senha incorretos',
         )
@@ -53,7 +53,7 @@ def login_para_token_de_acesso(form_data: T_FormData, session: T_Session):
 
 @router.post('/refresh_token', response_model=Token)
 def atualiza_token_de_acesso(usuario_atual: T_CurrentUser):
-    # com usuario atual, dentro do tempo de expiracao
+    # com o usuário atual dentro do tempo de expiração
     # gera um novo token de acesso
     novo_token_de_acesso = create_access_token(
         data={'sub': usuario_atual.email}

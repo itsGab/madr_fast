@@ -2,9 +2,7 @@ from http import HTTPStatus
 
 
 def test_altera_romancista_retorna_ok_e_schema(client, romancista, token):
-    json_input = {
-        'nome': 'jorge da silva',
-    }
+    json_input = {'nome': 'jorge da silva'}
 
     response = client.patch(
         f'/romancistas/{romancista.id}',
@@ -18,12 +16,27 @@ def test_altera_romancista_retorna_ok_e_schema(client, romancista, token):
     assert response.json() == json_output
 
 
+def test_altera_romancista_para_mesmo_nome_retorna_ok_e_schema(
+    client, romancista, token
+):
+    json_input = {'nome': romancista.nome}
+
+    response = client.patch(
+        f'/romancistas/{romancista.id}',
+        headers={'Authorization': f'Bearer {token}'},
+        json=json_input,
+    )
+
+    json_output = {'nome': 'jorge', 'id': romancista.id}
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == json_output
+
+
 def test_altera_romancista_sem_autenticacao_retorna_nao_autorizado(
     client, romancista
 ):
-    json_input = {
-        'nome': 'jorge da silva',
-    }
+    json_input = {'nome': 'jorge da silva'}
 
     response = client.patch(
         f'/romancistas/{romancista.id}',
@@ -39,9 +52,7 @@ def test_altera_romancista_sem_autenticacao_retorna_nao_autorizado(
 def test_altera_romancista_nome_sanitizado_retorna_ok_e_nome_sanitizado(
     client, romancista, token
 ):
-    json_input = {
-        'nome': '    JORGE    da    silvA    ',
-    }
+    json_input = {'nome': '    JORGE    da    silvA    '}
 
     response = client.patch(
         f'/romancistas/{romancista.id}',
@@ -58,9 +69,7 @@ def test_altera_romancista_nome_sanitizado_retorna_ok_e_nome_sanitizado(
 def test_altera_romancista_id_nao_cadastrado_retorna_erro(
     client, romancista, token
 ):
-    json_input = {
-        'nome': 'jorge da silva',
-    }
+    json_input = {'nome': 'jorge da silva'}
 
     response = client.patch(
         f'/romancistas/{romancista.id + 1}',
@@ -73,11 +82,9 @@ def test_altera_romancista_id_nao_cadastrado_retorna_erro(
 
 
 def test_altera_romancista_nome_ja_existe_retorna_conflito(
-    client, romancista, token
+    client, romancista, outro_romancista, token
 ):
-    json_input = {
-        'nome': romancista.nome,
-    }
+    json_input = {'nome': outro_romancista.nome}
 
     response = client.patch(
         f'/romancistas/{romancista.id}',
@@ -92,9 +99,7 @@ def test_altera_romancista_nome_ja_existe_retorna_conflito(
 def test_altera_romancista_campo_nome_str_vazia_retorna_erro(  # `nome = ''`
     client, romancista, token
 ):
-    json_input = {
-        'nome': '',
-    }
+    json_input = {'nome': ''}
 
     response = client.patch(
         f'/romancistas/{romancista.id}',

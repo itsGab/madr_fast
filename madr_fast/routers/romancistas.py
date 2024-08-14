@@ -18,12 +18,14 @@ from madr_fast.schemas import (
 )
 from madr_fast.security import get_current_user
 
+# rota
 router = APIRouter(prefix='/romancistas', tags=['Romancistas'])
 
+# tipos annotated
 T_Session = Annotated[Session, Depends(get_session)]
 T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 
-# configs para query (para definir paginacao)
+# configs para query (para definir paginação)
 offset_std = 0
 limit_std = 20
 
@@ -39,7 +41,7 @@ def cadastra_romancista(
     session: T_Session,
     usuario_atual: T_CurrentUser,
 ):
-    # verificar se o romancista existe no database
+    # verificar se o romancista existe no banco de dados
     check_db = session.scalar(
         select(Romancista).where(Romancista.nome == romancista.nome)
     )
@@ -70,7 +72,7 @@ def busca_romancistas_por_id(
         select(Romancista).where(Romancista.id == romancista_id)
     )
     if not romancista:
-        raise HTTPException(  # caso nao exista, levanta not found
+        raise HTTPException(  # caso não exista, levanta not found
             status_code=HTTPStatus.NOT_FOUND,
             detail='Romancista não consta no MADR',
         )
@@ -86,7 +88,7 @@ def busca_romancistas_por_query(session: T_Session, nome: str = Query(None)):
     if nome:
         query = query.filter(Romancista.nome.contains(nome))
 
-    # retorna paginacao de romancistas
+    # retorna paginação de romancistas
     return paginate(session, query=query)
 
 
@@ -100,7 +102,7 @@ def altera_romancista(
     romancista_id: int,
     session: T_Session,
     usuario_atual: T_CurrentUser,
-    romancista_update: RomancistaUpdate,  # dados atualizados!!!
+    romancista_update: RomancistaUpdate,
 ):
     # carrega o romancista por id do banco de dados
     romancista_db = session.scalar(
@@ -109,10 +111,15 @@ def altera_romancista(
 
     # verifica se o romancista existe no banco de dados
     if not romancista_db:
-        raise HTTPException(  # caso nao exista, levanta not found
+        raise HTTPException(  # caso não exista, levanta not found
             status_code=HTTPStatus.NOT_FOUND,
             detail='Romancista não consta no MADR',
         )
+
+    # verifica nome atualizado igual nome atual
+    if romancista_db.nome == romancista_update.nome:
+        # caso mesmo nome retorna romancista
+        return romancista_db
 
     # verifica validade do nome atualizado
     if romancista_update.nome and session.scalar(
@@ -122,13 +129,8 @@ def altera_romancista(
             status_code=HTTPStatus.CONFLICT, detail='Nome já consta no MADR'
         )
 
-    # atualiza os dados do livro, caso diferente de None
-    for chave, valor in romancista_update.model_dump(
-        exclude_none=True
-    ).items():
-        setattr(romancista_db, chave, valor)
-
     # atualiza o banco de dados
+    romancista_db.nome = romancista_update.nome
     session.add(romancista_db)
     session.commit()
     session.refresh(romancista_db)

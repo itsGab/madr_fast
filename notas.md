@@ -22,3 +22,5 @@
 
 # OUTROS NOTAS
 - paginacao foi feito com o fastapi_pagination
+
+

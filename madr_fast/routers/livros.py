@@ -25,10 +25,6 @@ router = APIRouter(prefix='/livros', tags=['Livros'])
 T_Session = Annotated[Session, Depends(get_session)]
 T_CurrentUser = Annotated[Usuario, Depends(get_current_user)]
 
-# configs para query (para definir paginacao)
-offset_std = 0
-limit_std = 20
-
 
 # * CREATE ---
 @router.post('/', response_model=LivroPublic, status_code=HTTPStatus.CREATED)
@@ -37,7 +33,7 @@ def cadastra_livro(
     session: T_Session,
     usuario_atual: T_CurrentUser,
 ):
-    # verifica se o titulo do livro ja existe no banco de dados
+    # verifica se o título do livro já existe no banco de dados
     check_db = session.scalar(
         select(Livro).where(Livro.titulo == livro.titulo)
     )
@@ -52,7 +48,7 @@ def cadastra_livro(
         select(Romancista).where(Romancista.id == livro.romancista_id)
     )
     if not check_romancista:
-        raise HTTPException(  # caso romancista nao exista, levanta not found
+        raise HTTPException(  # caso romancista não exista, levanta not found
             status_code=HTTPStatus.NOT_FOUND,
             detail='Romancista não consta no MADR',
         )
@@ -78,7 +74,7 @@ def busca_livro_por_id(livro_id: int, session: T_Session):
 
     # verifica se existe livro com o livro_id
     if not livro:
-        raise HTTPException(  # caso nao existe, levanta not found
+        raise HTTPException(  # caso não existe, levanta not found
             status_code=HTTPStatus.NOT_FOUND, detail='Livro não consta no MADR'
         )
 
@@ -103,10 +99,11 @@ def busca_livros_por_query(
     if ano:
         query = query.filter(Livro.ano == ano)
 
-    # retorna paginacao de livros
+    # retorna paginação de livros
     return paginate(session, query=query)
 
 
+# por romancista id
 @router.get(
     '/romancista/{romancista_id}',
     response_model=PaginaLivros[LivroPublic],
@@ -119,14 +116,14 @@ def busca_livros_por_romancista_id(romancista_id: int, session: T_Session):
     )
 
     if not check_romancista:
-        raise HTTPException(  # caso nao existe, levanta not found
+        raise HTTPException(  # caso não existe, levanta not found
             status_code=HTTPStatus.NOT_FOUND,
             detail='Romancista não consta no MADR',
         )
 
     query = select(Livro).filter(Livro.romancista_id == romancista_id)
 
-    # retorna paginacao de livros
+    # retorna paginação de livros
     return paginate(session, query=query)
 
 
@@ -138,22 +135,22 @@ def altera_livro(
     livro_id: int,
     session: T_Session,
     usuario_atual: T_CurrentUser,
-    livro_update: LivroUpdate,  # dados atualizados!!!
+    livro_update: LivroUpdate,
 ):
     # carrega o livro buscado por id do banco de dados
     livro_db = session.scalar(select(Livro).where(Livro.id == livro_id))
 
     # verifica se o livro existe no banco de dados
     if not livro_db:
-        raise HTTPException(  # caso nao existe, levanta not found
+        raise HTTPException(  # caso não existe, levanta not found
             status_code=HTTPStatus.NOT_FOUND, detail='Livro não consta no MADR'
         )
 
-    # verifica validade do titulo atualizado
+    # verifica validade do título atualizado
     if livro_update.titulo and session.scalar(
         select(Livro).where(Livro.titulo == livro_update.titulo)
     ):
-        raise HTTPException(  # caso ja exista, levanta conflict
+        raise HTTPException(  # caso já exista, levanta conflict
             status_code=HTTPStatus.CONFLICT, detail='Título já consta no MADR'
         )
 
@@ -165,7 +162,7 @@ def altera_livro(
             )
         )
         if not check_romancista:
-            raise HTTPException(  # caso id nao exista, levanta not found
+            raise HTTPException(  # caso id não exista, levanta not found
                 status_code=HTTPStatus.NOT_FOUND,
                 detail='Romancista não consta no MADR',
             )
@@ -205,5 +202,5 @@ def deleta_livro(
     session.delete(livro_db)
     session.commit()
 
-    # retorna mensagem de susseso
+    # retorna mensagem de sucesso
     return {'message': 'Livro deletado no MADR'}
