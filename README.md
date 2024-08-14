@@ -346,23 +346,27 @@ PaginaLivros = CustomizedPage[
 
 **Exemplo schema update**
 ```python
-class UsuarioUpdate(BaseModel):
-    username: str | None = Field(default=None, min_length=1)
-    email: EmailStr | None = None
-    senha: str | None = None
+class LivroUpdate(BaseModel):
+    titulo: str | None = Field(default=None, min_length=1)
+    ano: int | None = Field(gt=0, lt=dt.today().year + 1, default=None)
+    romancista_id: int | None = None
 
-    _valida_e_sanitiza = field_validator('username')(valida_e_sanitiza)
+    _valida_e_sanitiza = field_validator('titulo')(valida_e_sanitiza)
 ```
 
 **Exemplo função de patch**
 ```python 
 @router.patch('/{livro_id}')
 def altera_livro(..., livro_update: LivroUpdate,...):
+
     # ...
+
     # atualiza os dados do livro para campos diferentes de None
     for chave, valor in livro_update.model_dump(exclude_none=True).items():
         setattr(livro_db, chave, valor)
+
     # ...
+
     return livro_db
 ```
 **Observação: No caso de romancista, não usamos campos opcionais porque há apenas o nome que pode ser alterado, e este é um campo obrigatório para a atualização.**
@@ -418,11 +422,18 @@ def altera_livro(..., livro_update: LivroUpdate,...):
 
 ### Executar Testes
 
-1. **Rodar Testes**
+1. **Ativar o Ambiente Virtual**
 
-   Para executar os testes e verificar a cobertura de código, use o comando:
+   Antes de rodar os testes, você precisa ativar o ambiente virtual gerenciado pelo Poetry. Execute o seguinte comando:
+   ```bash
+   poetry shell
+   ```
+
+2. **Rodar Testes**
+
+   Depois de ativar o ambiente virtual, você pode executar os testes e verificar a cobertura de código com o comando:
    ```bash
    task test
    ```
 
-   Esse comando carrega um contêiner de banco de dados no docker e executa todos os testes definidos e gera um relatório de cobertura.
+   Esse comando carrega um contêiner de banco de dados no Docker e executa todos os testes definidos, gerando um relatório de cobertura.
