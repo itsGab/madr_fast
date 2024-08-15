@@ -1,6 +1,6 @@
 # Projeto MADR (Mader)
 
-Esta é a minha versão do projeto final (ou TCC) para o curso [Curso de FastAPI](https://fastapidozero.dunossauro.com), ministrado pelo [Eduardo Mendes (Dunossauro)](https://dunossauro.com). O objetivo é criar um gerenciador de livros e relacionar com seus autores, denominado MADR (Mader), que significa "**Meu Acervo Digital de Romances**". 
+Esta é a minha versão do projeto final (ou TCC) para o curso [FastAPI do ZERO](https://fastapidozero.dunossauro.com), ministrado pelo [Eduardo Mendes (Dunossauro)](https://dunossauro.com). O objetivo é criar um gerenciador de livros e relacionar com seus autores, denominado MADR (Mader), que significa "**Meu Acervo Digital de Romances**". 
 
 
 ## Índice
@@ -303,7 +303,7 @@ class UsuarioSchema(BaseModel):
     _valida_e_sanitiza = field_validator('username')(valida_e_sanitiza)
 ```
 
-### 2. Páginação de Resultados
+### 2. Paginação de Resultados
 
 - **Desafio**: Gerenciar e apresentar grandes volumes de dados de maneira eficiente.
 - **Solução**: Utilização da biblioteca `fastapi-pagination` para implementar a paginação nos endpoints que retornam listas de itens. Configuração de uma página padrão de 20 itens e tradução dos aliases dos campos para o português para melhorar a experiência do usuário.
