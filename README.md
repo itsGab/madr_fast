@@ -1,6 +1,6 @@
 # Projeto MADR (Mader)
 
-Esta é a minha versão do projeto final (ou TCC) para o curso [FastAPI do ZERO](https://fastapidozero.dunossauro.com), ministrado pelo [Eduardo Mendes (Dunossauro)](https://dunossauro.com). O objetivo é criar um gerenciador de livros e relacionar com seus autores, denominado MADR (Mader), que significa "**Meu Acervo Digital de Romances**". 
+Esta é a minha versão do projeto final (ou TCC) para o curso [FastAPI do ZERO](https://fastapidozero.dunossauro.com), ministrado pelo [Eduardo Mendes (Dunossauro)](https://dunossauro.com). O objetivo é criar um gerenciador de livros e relacionar com seus autores, denominado MADR (Mader), que significa "**Meu Acervo Digital de Romances**". Confira os [outros projetos finais](https://fastapidozero.dunossauro.com/projetos/projetos_finais/) de participantes do curso.
 
 
 ## Índice
@@ -22,6 +22,8 @@ O projeto foi baseado no material do curso e, para facilitar a compreensão, par
 Durante o desenvolvimento, foram enfrentados desafios como a sanitização de inputs, a implementação de paginação para listas com mais de 20 itens e outros. Detalhes sobre as abordagens e soluções para esses desafios podem ser encontrados na seção "Desafios e Soluções".
 
 ## Tecnologias Utilizadas
+
+[voltar ao índice](#índice)
 
 ### Tecnologias Base do Projeto
 
@@ -82,6 +84,8 @@ post_test = 'coverage html'
 
 ## Estrutura do Projeto
 
+[voltar ao índice](#índice)
+
 ### Diretórios e Arquivos
 
 ```bash
@@ -141,6 +145,8 @@ post_test = 'coverage html'
 
 ### Descrição dos Diretórios e Arquivos
 
+[voltar ao índice](#índice)
+
 #### `madr_fast/`
 
 - **`routers/`**: Contém os roteadores da aplicação.
@@ -185,6 +191,8 @@ post_test = 'coverage html'
 
 
 ## Funcionalidades
+
+[voltar ao índice](#índice)
 
 ### Documentação da API (Simplificada)
 
@@ -278,6 +286,8 @@ post_test = 'coverage html'
 
 
 ## Desafios e Soluções
+
+[voltar ao índice](#índice)
 
 ### 1. Sanitização de Inputs
 
@@ -393,6 +403,8 @@ def altera_livro(..., livro_update: LivroUpdate,...):
 
 ## Como Executar
 
+[voltar ao índice](#índice)
+
 ### Configuração do Ambiente
 
 1. **Criação do Arquivo `.env`**
@@ -448,3 +460,7 @@ def altera_livro(..., livro_update: LivroUpdate,...):
    ```
 
    Esse comando carrega um contêiner de banco de dados no Docker e executa todos os testes definidos, gerando um relatório de cobertura.
+
+  ---
+  
+[voltar ao topo](#projeto-madr-mader)
