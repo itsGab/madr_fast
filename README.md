@@ -17,8 +17,9 @@ Esta é a minha versão do projeto final (ou TCC) para o curso [FastAPI do ZERO]
 
 O **MADR** é uma API desenvolvida com FastAPI para gerenciar um acervo digital de romances. Ela permite operações de CRUD (criar, ler, atualizar e deletar) para livros e romancistas, além de incluir o registro de contas e autenticação para operações específicas.
 
-O projeto foi desenvolvido com base no material do curso e, para facilitar a compreensão, parte do código foi mantida em português. O nome `madr_fast` reflete o uso do framework FastAPI no desenvolvimento da aplicação. A API também inclui funcionalidades adicionais, como a busca de livros por romancista e a paginação dos resultados.
+O projeto foi baseado no material do curso e, para facilitar a compreensão, parte do código foi mantida em português. O nome `madr_fast` reflete o uso do framework FastAPI no desenvolvimento da aplicação.
 
+Durante o desenvolvimento, foram enfrentados desafios como a sanitização de inputs, a implementação de paginação para listas com mais de 20 itens e outros. Detalhes sobre as abordagens e soluções para esses desafios podem ser encontrados na seção "Desafios e Soluções".
 
 ## Tecnologias Utilizadas
 
@@ -66,7 +67,7 @@ toolong = "^1.5.0"
 testcontainers = "^4.7.2"
 ```
 
-### Taskipy
+### Configurações do Taskipy
 
 ```toml
 [tool.taskipy.tasks]
