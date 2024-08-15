@@ -2,8 +2,6 @@
 
 Esta é a minha versão do projeto final (ou TCC) para o curso [Curso de FastAPI](https://fastapidozero.dunossauro.com), ministrado pelo [Eduardo Mendes (Dunossauro)](https://dunossauro.com). O objetivo é criar um gerenciador de livros e relacionar com seus autores, denominado MADR (Mader), que significa "**Meu Acervo Digital de Romances**". 
 
-O projeto é baseado no material do curso e, por opção, parte do código foi mantida em português para facilitar o entendimento. O projeto utiliza a tecnologia `FastAPI`, e por isso o nome do projeto foi escolhido como `madr_fast`.
-
 
 ## Índice
 
@@ -13,16 +11,28 @@ O projeto é baseado no material do curso e, por opção, parte do código foi m
 4. [Funcionalidades](#funcionalidades)
 5. [Desafios e Soluções](#desafios-e-soluções)
 6. [Como Executar](#como-executar)
-7. [Contribuição](#contribuição)
-8. [Licença](#licença)
 
 
 ## Visão Geral
 
-O MADR é uma API desenvolvida usando FastAPI para o gerenciamento de um acervo digital de romances, permitindo operações de CRUD (criar, ler, atualizar e deletar) para livros e romancistas. Inclui funcionalidades adicionais como a busca de livros por romancista e paginação dos resultados.
+O **MADR** é uma API desenvolvida com FastAPI para gerenciar um acervo digital de romances. Ela permite operações de CRUD (criar, ler, atualizar e deletar) para livros e romancistas, além de incluir o registro de contas e autenticação para operações específicas.
+
+O projeto foi desenvolvido com base no material do curso e, para facilitar a compreensão, parte do código foi mantida em português. O nome `madr_fast` reflete o uso do framework FastAPI no desenvolvimento da aplicação. A API também inclui funcionalidades adicionais, como a busca de livros por romancista e a paginação dos resultados.
 
 
 ## Tecnologias Utilizadas
+
+### Tecnologias Base do Projeto
+
+```yaml
+Linguagem: Python 3.12
+Framework: FastAPI
+Toolkit de SQL: SQLAlchemy
+Gerenciamento: Poetry
+Banco de Dados: PostgreSQL
+Containers: Docker
+Testes: Pytest
+```
 
 ### Dependências do Projeto
 
@@ -289,7 +299,7 @@ class UsuarioSchema(BaseModel):
     username: str = Field(min_length=1)
     email: EmailStr
     senha: str
-# garante que as entradas de texto sejam validades e sanitizadas
+# garante que as entradas de texto sejam validadas e sanitizadas
     _valida_e_sanitiza = field_validator('username')(valida_e_sanitiza)
 ```
 
@@ -420,7 +430,7 @@ def altera_livro(..., livro_update: LivroUpdate,...):
 
    A aplicação estará disponível em `http://localhost:8000` por padrão e a documentação está disponível em `http://localhost:8000/docs`
 
-### Executar Testes
+### Execução de Testes
 
 1. **Ativar o Ambiente Virtual**
 
