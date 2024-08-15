@@ -103,7 +103,7 @@ def busca_livros_por_query(
     return paginate(session, query=query)
 
 
-# por romancista id
+# EXTRA: por romancista id
 @router.get(
     '/romancista/{romancista_id}',
     response_model=PaginaLivros[LivroPublic],

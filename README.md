@@ -90,8 +90,8 @@ post_test = 'coverage html'
 
 ```bash
 .
-├── madr_fast
-│   ├── routers
+├── madr_fast/
+│   ├── routers/
 │   │   ├── __init__.py
 │   │   ├── auth.py
 │   │   ├── contas.py
@@ -104,23 +104,23 @@ post_test = 'coverage html'
 │   ├── schemas.py
 │   ├── security.py
 │   └── settings.py
-├── migrations
-│   ├── versions
+├── migrations/
+│   ├── versions/
 │   │   └── a01291f63545_criando_o_banco_de_dados.py
 │   ├── README
 │   ├── env.py
 │   └── script.py.mako
-├── tests
-│   ├── test_contas
+├── tests/
+│   ├── test_contas/
 │   │   ├── test_atualiza_conta.py
 │   │   ├── test_deleta_conta.py
 │   │   └── test_registra_conta.py
-│   ├── test_livros
+│   ├── test_livros/
 │   │   ├── test_altera_livro.py
 │   │   ├── test_busca_livro.py
 │   │   ├── test_cadastra_livro.py
 │   │   └── test_deleta_livro.py
-│   ├── test_romancistas
+│   ├── test_romancistas/
 │   │   ├── test_altera_romancista.py
 │   │   ├── test_busca_romancista.py
 │   │   ├── test_cadastra_romancista.py
@@ -132,7 +132,7 @@ post_test = 'coverage html'
 │   ├── test_auth.py
 │   ├── test_database.py
 │   └── test_security.py
-├── .env (<- arquivo no .gitignore)
+├── .env (não versionado com Git)
 ├── Dockerfile
 ├── README.md
 ├── alembic.ini
@@ -395,10 +395,34 @@ def altera_livro(..., livro_update: LivroUpdate,...):
 ### 4. *Desafio Extra*: Busca de Livros por Romancista Específico
 - **Observação**: *Este endpoint foi adicionado como um recurso adicional e não estava originalmente requisitado no projeto.*
 - **Desafio**: Permitir a busca de livros associados a um romancista específico.
-- **Solução**: Implementação de um endpoint adicional que retorna todos os livros de um romancista identificado pelo `romancista_id`.
+- **Solução**: Implementação de um endpoint adicional que retorna uma lista paginada de livros de um romancista específico identificado pelo seu ID, por padrão responde lista 20 livros por página.
 
-**Detalhes do Endpoint**:
-`GET /livros/romancista/{romancista_id}`: Retorna uma lista paginada de livros de um romancista específico identificado pelo seu ID. O endpoint retorna um número padrão de 20 livros por página.
+**Implementação `GET /livros/romancista/{romancista_id}`**
+```python
+# EXTRA: leitura por romancista id
+@router.get(
+    '/romancista/{romancista_id}',
+    response_model=PaginaLivros[LivroPublic],  # response model de paginação
+    status_code=HTTPStatus.OK,
+)
+def busca_livros_por_romancista_id(romancista_id: int, session: T_Session):
+    # verifica se existe romancista no banco de dados
+    check_romancista = session.scalar(
+        select(Romancista).where(Romancista.id == romancista_id)
+    )
+
+    if not check_romancista:
+        raise HTTPException(  # caso não existe, levanta not found
+            status_code=HTTPStatus.NOT_FOUND,
+            detail='Romancista não consta no MADR',
+        )
+
+    # cria a consulta de livros por id do romancista
+    query = select(Livro).filter(Livro.romancista_id == romancista_id)
+
+    # retorna paginação de livros baseado na consulta
+    return paginate(session, query=query)
+```
 
 
 ## Como Executar
